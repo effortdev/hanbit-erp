@@ -1,0 +1,17 @@
+services:
+  mysql:
+    image: mysql:8.0
+    container_name: hanbit-erp-mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: erp1234
+      MYSQL_DATABASE: hanbit_erp
+      MYSQL_USER: erp
+      MYSQL_PASSWORD: erp1234
+    ports:
+      - "3309:3306"
+    volumes:
+      - hanbit-erp-mysql-data:/var/lib/mysql
+    command: --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
+
+volumes:
+  hanbit-erp-mysql-data:
