@@ -10,6 +10,7 @@ public class InventoryTransactionVO {
     private InventoryTransactionType transactionType;
     private int quantity;
     private Long purchaseRequestId;
+    private Long salesOrderId;
     private Long createdBy;
     private LocalDateTime createdAt;
 
@@ -19,6 +20,17 @@ public class InventoryTransactionVO {
         vo.transactionType = InventoryTransactionType.RECEIPT;
         vo.quantity = quantity;
         vo.purchaseRequestId = purchaseRequestId;
+        vo.createdBy = createdBy;
+        return vo;
+    }
+
+    /** docs/adr/ADR-017: 수주 확정 시 출고 이력. */
+    public static InventoryTransactionVO issue(Long itemId, int quantity, Long salesOrderId, Long createdBy) {
+        InventoryTransactionVO vo = new InventoryTransactionVO();
+        vo.itemId = itemId;
+        vo.transactionType = InventoryTransactionType.ISSUE;
+        vo.quantity = quantity;
+        vo.salesOrderId = salesOrderId;
         vo.createdBy = createdBy;
         return vo;
     }
@@ -61,6 +73,14 @@ public class InventoryTransactionVO {
 
     public void setPurchaseRequestId(Long purchaseRequestId) {
         this.purchaseRequestId = purchaseRequestId;
+    }
+
+    public Long getSalesOrderId() {
+        return salesOrderId;
+    }
+
+    public void setSalesOrderId(Long salesOrderId) {
+        this.salesOrderId = salesOrderId;
     }
 
     public Long getCreatedBy() {

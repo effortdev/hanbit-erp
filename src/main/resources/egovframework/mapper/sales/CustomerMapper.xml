@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="egovframework.erp.sales.mapper.CustomerMapper">
+
+    <resultMap id="customerResultMap" type="egovframework.erp.sales.domain.CustomerVO">
+        <id property="id" column="id"/>
+        <result property="name" column="name"/>
+        <result property="contactPerson" column="contact_person"/>
+        <result property="phone" column="phone"/>
+        <result property="email" column="email"/>
+        <result property="address" column="address"/>
+        <result property="createdAt" column="created_at"/>
+    </resultMap>
+
+    <insert id="insertCustomer" parameterType="egovframework.erp.sales.domain.CustomerVO"
+            useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO customer (name, contact_person, phone, email, address)
+        VALUES (#{name}, #{contactPerson}, #{phone}, #{email}, #{address})
+    </insert>
+
+    <select id="selectById" resultMap="customerResultMap">
+        SELECT id, name, contact_person, phone, email, address, created_at FROM customer WHERE id = #{id}
+    </select>
+
+    <select id="selectAll" resultMap="customerResultMap">
+        SELECT id, name, contact_person, phone, email, address, created_at FROM customer ORDER BY name
+    </select>
+
+</mapper>

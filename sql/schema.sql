@@ -299,9 +299,10 @@ CREATE TABLE IF NOT EXISTS purchase_request (
 CREATE TABLE IF NOT EXISTS inventory_transaction (
     id                   BIGINT AUTO_INCREMENT PRIMARY KEY,
     item_id              BIGINT NOT NULL,
-    transaction_type     VARCHAR(10) NOT NULL COMMENT 'RECEIPT',
+    transaction_type     VARCHAR(10) NOT NULL COMMENT 'RECEIPT(입고)|ISSUE(출고, docs/adr/ADR-017)',
     quantity             INT NOT NULL,
-    purchase_request_id  BIGINT NULL,
+    purchase_request_id  BIGINT NULL COMMENT 'RECEIPT일 때만 채움',
+    sales_order_id       BIGINT NULL COMMENT 'ISSUE일 때만 채움 (docs/adr/ADR-017) — FK는 sales_order 생성 후 ALTER로 추가',
     created_by           BIGINT NOT NULL,
     created_at           DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
     CONSTRAINT fk_inventory_transaction_item FOREIGN KEY (item_id) REFERENCES item (id),
@@ -315,3 +316,46 @@ INSERT INTO item (name, unit, current_stock, safety_stock) VALUES
   ('A4 용지', '박스', 5, 20),
   ('사무용 의자', '개', 30, 10),
   ('포장 박스', '개', 8, 50);
+
+-- =========================================================
+-- Module 6: 영업/매출관리 (egovframework.erp.sales)
+-- =========================================================
+
+CREATE TABLE IF NOT EXISTS customer (
+    id              BIGINT AUTO_INCREMENT PRIMARY KEY,
+    name            VARCHAR(100) NOT NULL,
+    contact_person  VARCHAR(50) NULL,
+    phone           VARCHAR(30) NULL,
+    email           VARCHAR(100) NULL,
+    address         VARCHAR(200) NULL,
+    created_at      DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- 수주: 전자결재를 거치지 않는다(요구사항의 결재유형 목록에 수주/매출이 없음) — 등록→확정 2단계.
+-- 확정된(CONFIRMED) 행 자체가 매출 데이터다 — 별도 매출 테이블을 두지 않는다 (docs/adr/ADR-018).
+CREATE TABLE IF NOT EXISTS sales_order (
+    id              BIGINT AUTO_INCREMENT PRIMARY KEY,
+    customer_id     BIGINT NOT NULL,
+    item_id         BIGINT NOT NULL,
+    org_unit_id     BIGINT NOT NULL,
+    employee_id     BIGINT NOT NULL,
+    quantity        INT NOT NULL,
+    unit_price      DECIMAL(15,2) NOT NULL,
+    amount          DECIMAL(15,2) NOT NULL COMMENT 'quantity * unit_price 스냅샷',
+    status          VARCHAR(10) NOT NULL DEFAULT 'REGISTERED' COMMENT 'REGISTERED|CONFIRMED',
+    created_at      DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    confirmed_at    DATETIME NULL,
+    CONSTRAINT fk_sales_order_customer FOREIGN KEY (customer_id) REFERENCES customer (id),
+    CONSTRAINT fk_sales_order_item FOREIGN KEY (item_id) REFERENCES item (id),
+    CONSTRAINT fk_sales_order_org FOREIGN KEY (org_unit_id) REFERENCES org_unit (id),
+    CONSTRAINT fk_sales_order_employee FOREIGN KEY (employee_id) REFERENCES employee (id)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- inventory_transaction.sales_order_id의 FK는 sales_order가 만들어진 뒤에야 걸 수 있다 (순환 참조 회피)
+ALTER TABLE inventory_transaction ADD CONSTRAINT fk_inventory_transaction_sales_order
+    FOREIGN KEY (sales_order_id) REFERENCES sales_order (id);
+
+-- 데모 거래처
+INSERT INTO customer (name, contact_person, phone, email, address) VALUES
+  ('한빛유통(주)', '박거래', '02-1234-5678', 'park@hanbit-dist.example', '서울시 강남구'),
+  ('대성전자상사', '이납품', '031-987-6543', 'lee@daesung.example', '경기도 성남시');

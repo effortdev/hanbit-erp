@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="egovframework.erp.sales.mapper.SalesOrderMapper">
+
+    <resultMap id="orderResultMap" type="egovframework.erp.sales.domain.SalesOrderVO">
+        <id property="id" column="id"/>
+        <result property="customerId" column="customer_id"/>
+        <result property="itemId" column="item_id"/>
+        <result property="orgUnitId" column="org_unit_id"/>
+        <result property="employeeId" column="employee_id"/>
+        <result property="quantity" column="quantity"/>
+        <result property="unitPrice" column="unit_price"/>
+        <result property="amount" column="amount"/>
+        <result property="status" column="status"/>
+        <result property="createdAt" column="created_at"/>
+        <result property="confirmedAt" column="confirmed_at"/>
+        <result property="customerName" column="customer_name"/>
+        <result property="itemName" column="item_name"/>
+        <result property="itemUnit" column="item_unit"/>
+        <result property="orgUnitName" column="org_unit_name"/>
+    </resultMap>
+
+    <resultMap id="summaryResultMap" type="egovframework.erp.sales.domain.SalesSummaryVO">
+        <result property="orgUnitName" column="org_unit_name"/>
+        <result property="yearMonth" column="sales_ym"/>
+        <result property="totalAmount" column="total_amount"/>
+    </resultMap>
+
+    <insert id="insertOrder" parameterType="egovframework.erp.sales.domain.SalesOrderVO"
+            useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO sales_order (customer_id, item_id, org_unit_id, employee_id, quantity, unit_price, amount, status)
+        VALUES (#{customerId}, #{itemId}, #{orgUnitId}, #{employeeId}, #{quantity}, #{unitPrice}, #{amount}, #{status})
+    </insert>
+
+    <sql id="selectColumns">
+        SELECT s.id, s.customer_id, s.item_id, s.org_unit_id, s.employee_id, s.quantity, s.unit_price, s.amount,
+               s.status, s.created_at, s.confirmed_at,
+               c.name AS customer_name, i.name AS item_name, i.unit AS item_unit, o.name AS org_unit_name
+        FROM sales_order s
+        JOIN customer c ON c.id = s.customer_id
+        JOIN item i ON i.id = s.item_id
+        JOIN org_unit o ON o.id = s.org_unit_id
+    </sql>
+
+    <select id="selectById" resultMap="orderResultMap">
+        <include refid="selectColumns"/>
+        WHERE s.id = #{id}
+    </select>
+
+    <select id="selectByEmployeeId" resultMap="orderResultMap">
+        <include refid="selectColumns"/>
+        WHERE s.employee_id = #{employeeId}
+        ORDER BY s.created_at DESC, s.id DESC
+    </select>
+
+    <update id="confirmOrder">
+        UPDATE sales_order SET status = 'CONFIRMED', confirmed_at = CURRENT_TIMESTAMP WHERE id = #{id}
+    </update>
+
+    <select id="selectMonthlySummary" resultMap="summaryResultMap">
+        SELECT o.name AS org_unit_name,
+               DATE_FORMAT(s.confirmed_at, '%Y-%m') AS sales_ym,
+               SUM(s.amount) AS total_amount
+        FROM sales_order s
+        JOIN org_unit o ON o.id = s.org_unit_id
+        WHERE s.status = 'CONFIRMED'
+        GROUP BY s.org_unit_id, DATE_FORMAT(s.confirmed_at, '%Y-%m')
+        ORDER BY sales_ym DESC, org_unit_name
+    </select>
+
+</mapper>

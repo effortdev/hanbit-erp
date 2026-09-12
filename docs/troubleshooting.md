@@ -1,5 +1,11 @@
 # 트러블슈팅 로그
 
+## 2026-09-12 — 매출 대시보드 쿼리에서 `year_month` 별칭 때문에 SQL 문법 오류
+
+- **증상**: Module 6 매출 대시보드(`/sales/dashboard`) 접속 시 `SQLSyntaxErrorException: You have an error in your SQL syntax ... near 'year_month, SUM(s.amount) ...'`.
+- **원인**: `SELECT ... AS year_month`로 컬럼 별칭을 지었는데, `YEAR_MONTH`가 MySQL에서 `INTERVAL '1-2' YEAR_MONTH` 같은 구문에 쓰이는 예약 토큰이라 별칭으로 그대로 쓰면 파서가 헷갈려한다. 이스케이프(백틱)를 안 쓰면 문법 오류가 난다.
+- **해결**: 별칭을 `sales_ym`으로 바꿔 예약어 충돌 자체를 피함 (백틱 이스케이프보다 간단하고 이후 유지보수 시 실수 여지가 적음). `VacationPolicyMapper.xml`의 `<=` 이스케이프 문제와 같은 종류의 실수(SQL을 XML/DB 구문 규칙과 함께 고려하지 않음) — 앞으로 새 컬럼 별칭을 지을 때 MySQL 예약어 목록과 겹치지 않는지 한 번 더 확인할 것.
+
 ## 2026-09-12 — `VacationPolicyMapper.xml`의 `<=` 때문에 MyBatis 매퍼 파싱 실패
 
 - **증상**: Module 3 추가 후 `mvn jetty:run`이 `SAXParseException: The content of elements must consist of well-formed character data or markup`로 `sqlSessionFactory` 빈 생성 실패.

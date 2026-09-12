@@ -28,4 +28,10 @@
         UPDATE item SET current_stock = current_stock + #{quantity} WHERE id = #{itemId}
     </update>
 
+    <!-- 가용 재고가 충분할 때만 원자적으로 차감 (docs/adr/ADR-017) -->
+    <update id="decreaseStockIfAvailable">
+        UPDATE item SET current_stock = current_stock - #{quantity}
+        WHERE id = #{itemId} AND current_stock &gt;= #{quantity}
+    </update>
+
 </mapper>

@@ -1,10 +1,11 @@
 package egovframework.erp.inventory.domain;
 
 /**
- * 지금은 RECEIPT(입고)만 쓴다. ISSUE(출고)는 Module 6이 실제로 필요해지는 시점에
- * 추가한다 — FR-5-4/FR-6-3에 근거는 있지만, 아직 아무도 호출하지 않는 코드를
- * 미리 만들어두지 않는다 (docs/adr/ADR-014, Module 4 BudgetThresholdPolicy 폐기 교훈).
+ * RECEIPT(입고, Module 5) / ISSUE(출고, Module 6 — 수주 확정 시 발생, docs/adr/ADR-017).
+ * ISSUE는 Module 5 설계 시점엔 "실제로 필요해지면 추가한다"며 미뤄뒀다가, Module 6에서
+ * 실제로 필요해져 지금 추가했다.
  */
 public enum InventoryTransactionType {
-    RECEIPT
+    RECEIPT,
+    ISSUE
 }
