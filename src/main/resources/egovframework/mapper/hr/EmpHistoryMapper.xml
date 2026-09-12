@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="egovframework.erp.hr.mapper.EmpHistoryMapper">
+
+    <resultMap id="empHistoryResultMap" type="egovframework.erp.hr.domain.EmpHistoryVO">
+        <id property="id" column="id"/>
+        <result property="employeeId" column="employee_id"/>
+        <result property="changeType" column="change_type"/>
+        <result property="beforeOrgUnitId" column="before_org_unit_id"/>
+        <result property="afterOrgUnitId" column="after_org_unit_id"/>
+        <result property="beforePosition" column="before_position"/>
+        <result property="afterPosition" column="after_position"/>
+        <result property="changedAt" column="changed_at"/>
+        <result property="changedBy" column="changed_by"/>
+        <result property="memo" column="memo"/>
+    </resultMap>
+
+    <!-- update/delete 매핑은 의도적으로 두지 않는다 (append-only, docs/adr/ADR-003) -->
+    <insert id="insertHistory" parameterType="egovframework.erp.hr.domain.EmpHistoryVO">
+        INSERT INTO emp_history
+            (employee_id, change_type, before_org_unit_id, after_org_unit_id,
+             before_position, after_position, changed_by, memo)
+        VALUES
+            (#{employeeId}, #{changeType}, #{beforeOrgUnitId}, #{afterOrgUnitId},
+             #{beforePosition}, #{afterPosition}, #{changedBy}, #{memo})
+    </insert>
+
+    <select id="selectByEmployeeId" parameterType="long" resultMap="empHistoryResultMap">
+        SELECT id, employee_id, change_type, before_org_unit_id, after_org_unit_id,
+               before_position, after_position, changed_at, changed_by, memo
+        FROM emp_history
+        WHERE employee_id = #{employeeId}
+        ORDER BY changed_at DESC, id DESC
+    </select>
+
+</mapper>

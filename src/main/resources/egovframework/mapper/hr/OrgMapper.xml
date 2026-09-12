@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="egovframework.erp.hr.mapper.OrgMapper">
+
+    <resultMap id="orgUnitResultMap" type="egovframework.erp.hr.domain.OrgUnitVO">
+        <id property="id" column="id"/>
+        <result property="name" column="name"/>
+        <result property="type" column="type"/>
+        <result property="parentId" column="parent_id"/>
+    </resultMap>
+
+    <!-- 본부-팀 2단계 고정 구조라 재귀 쿼리 없이 정렬만으로 트리 구성이 가능하다 (docs/adr/ADR-004) -->
+    <select id="selectOrgTree" resultMap="orgUnitResultMap">
+        SELECT id, name, type, parent_id
+        FROM org_unit
+        ORDER BY COALESCE(parent_id, id), type ASC, id
+    </select>
+
+    <select id="selectOrgUnit" parameterType="long" resultMap="orgUnitResultMap">
+        SELECT id, name, type, parent_id
+        FROM org_unit
+        WHERE id = #{id}
+    </select>
+
+    <insert id="insertOrgUnit" parameterType="egovframework.erp.hr.domain.OrgUnitVO" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO org_unit (name, type, parent_id)
+        VALUES (#{name}, #{type}, #{parentId})
+    </insert>
+
+</mapper>
