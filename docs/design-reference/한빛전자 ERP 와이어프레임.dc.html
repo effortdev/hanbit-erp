@@ -1,0 +1,1616 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet data-dc-atomics>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&amp;display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box}
+body{margin:0}
+::-webkit-scrollbar{width:8px;height:8px}
+::-webkit-scrollbar-thumb{background:#c7ccd4;border-radius:4px}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.35}}
+</style>
+</helmet>
+<div style="display:flex;height:100vh;width:100%;font-family:'Noto Sans KR',system-ui,-apple-system,sans-serif;background:#f4f5f7;color:#1a1d23;overflow:hidden;font-size:13px">
+
+  <div style="width:236px;flex:none;background:#1c2531;display:flex;flex-direction:column;overflow-y:auto">
+    <div style="padding:18px 20px;border-bottom:1px solid #2a3648">
+      <div style="font-size:15px;font-weight:700;color:#ffffff">㈜한빛전자</div>
+      <div style="font-size:11px;color:#8b95a5;margin-top:2px">사내 ERP 시스템 · 와이어프레임</div>
+    </div>
+
+    <div style="padding:14px 10px 0">
+      <div style="padding:9px 12px;border-radius:6px;display:flex;align-items:center;gap:8px;cursor:default" style-hover="background:#232f40">
+        <div style="width:6px;height:6px;border-radius:2px;background:#5b8def"></div>
+        <span style="font-size:12px;font-weight:700;color:#e7ebf1">조직/사원관리</span>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:2px;padding-left:22px;margin-top:2px">
+        <div onClick="{{ goOrgChart }}" style="padding:8px 10px;border-radius:6px;cursor:pointer;font-size:12.5px;color:{{ orgChartNavColor }};background:{{ orgChartNavBg }}">조직도</div>
+        <div onClick="{{ goEmpList }}" style="padding:8px 10px;border-radius:6px;cursor:pointer;font-size:12.5px;color:{{ empListNavColor }};background:{{ empListNavBg }}">사원 목록</div>
+      </div>
+    </div>
+
+    <div style="padding:14px 10px 0">
+      <div style="padding:9px 12px;border-radius:6px;display:flex;align-items:center;gap:8px;cursor:default">
+        <div style="width:6px;height:6px;border-radius:2px;background:#5b8def"></div>
+        <span style="font-size:12px;font-weight:700;color:#e7ebf1">전자결재</span>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:2px;padding-left:22px;margin-top:2px">
+        <div onClick="{{ goApList }}" style="padding:8px 10px;border-radius:6px;cursor:pointer;font-size:12.5px;color:{{ apListNavColor }};background:{{ apListNavBg }}">기안함 / 결재함</div>
+        <div onClick="{{ goApCompose }}" style="padding:8px 10px;border-radius:6px;cursor:pointer;font-size:12.5px;color:{{ apComposeNavColor }};background:{{ apComposeNavBg }}">기안 작성</div>
+      </div>
+    </div>
+
+    <div style="padding:14px 10px 0">
+      <div style="padding:9px 12px;border-radius:6px;display:flex;align-items:center;gap:8px;cursor:default">
+        <div style="width:6px;height:6px;border-radius:2px;background:#5b8def"></div>
+        <span style="font-size:12px;font-weight:700;color:#e7ebf1">근태관리</span>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:2px;padding-left:22px;margin-top:2px">
+        <div onClick="{{ goAttCalendar }}" style="padding:8px 10px;border-radius:6px;cursor:pointer;font-size:12.5px;color:{{ attCalNavColor }};background:{{ attCalNavBg }}">출퇴근 기록</div>
+        <div onClick="{{ goAttLeave }}" style="padding:8px 10px;border-radius:6px;cursor:pointer;font-size:12.5px;color:{{ attLeaveNavColor }};background:{{ attLeaveNavBg }}">휴가 신청</div>
+        <div onClick="{{ goAttBalance }}" style="padding:8px 10px;border-radius:6px;cursor:pointer;font-size:12.5px;color:{{ attBalanceNavColor }};background:{{ attBalanceNavBg }}">연차 잔여현황</div>
+      </div>
+    </div>
+
+    <div style="padding:14px 10px 0">
+      <div style="padding:9px 12px;border-radius:6px;display:flex;align-items:center;gap:8px;cursor:default">
+        <div style="width:6px;height:6px;border-radius:2px;background:#5b8def"></div>
+        <span style="font-size:12px;font-weight:700;color:#e7ebf1">예산/지출관리</span>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:2px;padding-left:22px;margin-top:2px">
+        <div onClick="{{ goBudgetDashboard }}" style="padding:8px 10px;border-radius:6px;cursor:pointer;font-size:12.5px;color:{{ budgetDashNavColor }};background:{{ budgetDashNavBg }}">예산 현황</div>
+        <div onClick="{{ goExpenseCompose }}" style="padding:8px 10px;border-radius:6px;cursor:pointer;font-size:12.5px;color:{{ budgetComposeNavColor }};background:{{ budgetComposeNavBg }}">지출결의서 작성</div>
+      </div>
+    </div>
+
+    <div style="padding:14px 10px 0">
+      <div style="padding:9px 12px;border-radius:6px;display:flex;align-items:center;gap:8px;cursor:default">
+        <div style="width:6px;height:6px;border-radius:2px;background:#5b8def"></div>
+        <span style="font-size:12px;font-weight:700;color:#e7ebf1">재고/구매관리</span>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:2px;padding-left:22px;margin-top:2px">
+        <div onClick="{{ goInvList }}" style="padding:8px 10px;border-radius:6px;cursor:pointer;font-size:12.5px;color:{{ invListNavColor }};background:{{ invListNavBg }}">재고 현황</div>
+        <div onClick="{{ goPurchaseCompose }}" style="padding:8px 10px;border-radius:6px;cursor:pointer;font-size:12.5px;color:{{ purchaseComposeNavColor }};background:{{ purchaseComposeNavBg }}">구매요청서 작성</div>
+        <div onClick="{{ goInvTracking }}" style="padding:8px 10px;border-radius:6px;cursor:pointer;font-size:12.5px;color:{{ invTrackNavColor }};background:{{ invTrackNavBg }}">구매 진행 상태</div>
+      </div>
+    </div>
+
+    <div style="padding:14px 10px 0">
+      <div style="padding:9px 12px;border-radius:6px;display:flex;align-items:center;gap:8px;cursor:default">
+        <div style="width:6px;height:6px;border-radius:2px;background:#5b8def"></div>
+        <span style="font-size:12px;font-weight:700;color:#e7ebf1">영업/매출관리</span>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:2px;padding-left:22px;margin-top:2px">
+        <div onClick="{{ goSalesCustomers }}" style="padding:8px 10px;border-radius:6px;cursor:pointer;font-size:12.5px;color:{{ salesCustNavColor }};background:{{ salesCustNavBg }}">거래처 관리</div>
+        <div onClick="{{ goSalesOrder }}" style="padding:8px 10px;border-radius:6px;cursor:pointer;font-size:12.5px;color:{{ salesOrderNavColor }};background:{{ salesOrderNavBg }}">수주 등록</div>
+        <div onClick="{{ goSalesDashboard }}" style="padding:8px 10px;border-radius:6px;cursor:pointer;font-size:12.5px;color:{{ salesDashNavColor }};background:{{ salesDashNavBg }}">매출 대시보드</div>
+      </div>
+    </div>
+
+    <div style="margin-top:auto;padding:14px 20px;border-top:1px solid #2a3648;display:flex;flex-direction:column;gap:10px">
+      <div style="display:flex;align-items:center;gap:8px">
+        <div style="width:28px;height:28px;border-radius:50%;background:#3a4a60;flex:none;display:flex;align-items:center;justify-content:center;color:#c7ced9;font-size:11px;font-weight:700">{{ currentUser.initial }}</div>
+        <div>
+          <div style="font-size:12px;font-weight:700;color:#e7ebf1">{{ currentUser.name }} {{ currentUser.position }}</div>
+          <div style="font-size:10.5px;color:#8b95a5">{{ currentUser.deptLabel }}</div>
+        </div>
+      </div>
+      <div onClick="{{ toggleUser }}" style="font-size:11px;color:#5b8def;cursor:pointer">↔ 테스트 계정 전환 ({{ otherUserLabel }})</div>
+    </div>
+  </div>
+
+  <div style="flex:1;display:flex;flex-direction:column;overflow:hidden;min-width:0">
+    <div style="height:52px;flex:none;background:#ffffff;border-bottom:1px solid #e2e5ea;display:flex;align-items:center;justify-content:space-between;padding:0 24px">
+      <div style="font-size:12.5px;color:#6b7280">{{ breadcrumb }}</div>
+      <div style="font-size:12px;color:#9aa2ad">2026-09-12 (금)</div>
+    </div>
+
+    <div style="flex:1;overflow-y:auto;padding:28px 32px">
+
+      <sc-if value="{{ isOrgChart }}" hint-placeholder-val="{{ true }}">
+        <div style="max-width:1040px">
+          <h1 style="font-size:20px;font-weight:700;margin:0 0 4px">조직도</h1>
+          <p style="font-size:12.5px;color:#6b7280;margin:0 0 22px">본부(3) - 팀(8) 2단계 구조 · 총 21명</p>
+          <div style="background:#ffffff;border:1px solid #e2e5ea;border-radius:10px;padding:28px 24px;display:flex;flex-direction:column;align-items:center;gap:24px">
+            <div style="padding:10px 22px;border-radius:8px;background:#1c2531;color:#fff;font-size:13px;font-weight:700">㈜한빛전자 대표이사</div>
+            <div style="width:1px;height:20px;background:#d7dbe0"></div>
+            <div style="display:flex;gap:28px;flex-wrap:wrap;justify-content:center;width:100%">
+
+              <div style="flex:1;min-width:260px;display:flex;flex-direction:column;align-items:center;gap:14px">
+                <div style="padding:9px 18px;border-radius:7px;background:#e8f0fe;color:#1d4ed8;font-size:12.5px;font-weight:700;border:1px solid #bfd7fe">경영지원본부</div>
+                <div style="width:1px;height:14px;background:#d7dbe0"></div>
+                <div style="display:flex;flex-direction:column;gap:8px;width:100%">
+                  <div style="border:1px solid #e2e5ea;border-radius:7px;padding:10px 14px;display:flex;justify-content:space-between;font-size:12px"><span>인사팀</span><span style="color:#6b7280">3명</span></div>
+                  <div style="border:1px solid #e2e5ea;border-radius:7px;padding:10px 14px;display:flex;justify-content:space-between;font-size:12px"><span>회계팀</span><span style="color:#6b7280">3명</span></div>
+                  <div style="border:1px solid #e2e5ea;border-radius:7px;padding:10px 14px;display:flex;justify-content:space-between;font-size:12px"><span>총무팀</span><span style="color:#6b7280">2명</span></div>
+                </div>
+              </div>
+
+              <div style="flex:1;min-width:260px;display:flex;flex-direction:column;align-items:center;gap:14px">
+                <div style="padding:9px 18px;border-radius:7px;background:#e8f0fe;color:#1d4ed8;font-size:12.5px;font-weight:700;border:1px solid #bfd7fe">영업본부</div>
+                <div style="width:1px;height:14px;background:#d7dbe0"></div>
+                <div style="display:flex;flex-direction:column;gap:8px;width:100%">
+                  <div style="border:1px solid #e2e5ea;border-radius:7px;padding:10px 14px;display:flex;justify-content:space-between;font-size:12px"><span>국내영업팀</span><span style="color:#6b7280">4명</span></div>
+                  <div style="border:1px solid #e2e5ea;border-radius:7px;padding:10px 14px;display:flex;justify-content:space-between;font-size:12px"><span>해외영업팀</span><span style="color:#6b7280">2명</span></div>
+                </div>
+              </div>
+
+              <div style="flex:1;min-width:260px;display:flex;flex-direction:column;align-items:center;gap:14px">
+                <div style="padding:9px 18px;border-radius:7px;background:#e8f0fe;color:#1d4ed8;font-size:12.5px;font-weight:700;border:1px solid #bfd7fe">물류본부</div>
+                <div style="width:1px;height:14px;background:#d7dbe0"></div>
+                <div style="display:flex;flex-direction:column;gap:8px;width:100%">
+                  <div style="border:1px solid #e2e5ea;border-radius:7px;padding:10px 14px;display:flex;justify-content:space-between;font-size:12px"><span>구매팀</span><span style="color:#6b7280">2명</span></div>
+                  <div style="border:1px solid #e2e5ea;border-radius:7px;padding:10px 14px;display:flex;justify-content:space-between;font-size:12px"><span>재고관리팀</span><span style="color:#6b7280">2명</span></div>
+                  <div style="border:1px solid #e2e5ea;border-radius:7px;padding:10px 14px;display:flex;justify-content:space-between;font-size:12px"><span>생산관리팀</span><span style="color:#6b7280">3명</span></div>
+                </div>
+              </div>
+
+            </div>
+          </div>
+        </div>
+      </sc-if>
+
+      <sc-if value="{{ isEmpList }}" hint-placeholder-val="{{ false }}">
+        <div>
+          <h1 style="font-size:20px;font-weight:700;margin:0 0 4px">사원 목록</h1>
+          <p style="font-size:12.5px;color:#6b7280;margin:0 0 18px">총 {{ empCount }}명</p>
+          <div style="background:#ffffff;border:1px solid #e2e5ea;border-radius:10px;overflow:hidden">
+            <div style="display:grid;grid-template-columns:90px 90px 70px 1fr 1fr 100px 80px;padding:10px 16px;background:#f7f8fa;border-bottom:1px solid #e2e5ea;font-size:11.5px;font-weight:700;color:#6b7280">
+              <div>사번</div><div>이름</div><div>직급</div><div>소속</div><div>연락처</div><div>입사일</div><div>상태</div>
+            </div>
+            <sc-for list="{{ employees }}" as="emp" hint-placeholder-count="8">
+              <div onClick="{{ emp.select }}" style="display:grid;grid-template-columns:90px 90px 70px 1fr 1fr 100px 80px;padding:10px 16px;border-bottom:1px solid #eef0f3;font-size:12.5px;cursor:pointer;align-items:center" style-hover="background:#f7f8fa">
+                <div style="color:#9aa2ad">{{ emp.empNo }}</div>
+                <div style="font-weight:700">{{ emp.name }}</div>
+                <div>{{ emp.position }}</div>
+                <div style="color:#6b7280">{{ emp.deptLabel }}</div>
+                <div style="color:#6b7280">{{ emp.phone }}</div>
+                <div style="color:#6b7280">{{ emp.joinDate }}</div>
+                <div><span style="padding:2px 8px;border-radius:10px;font-size:11px;{{ emp.statusStyle }}">{{ emp.status }}</span></div>
+              </div>
+            </sc-for>
+          </div>
+        </div>
+      </sc-if>
+
+      <sc-if value="{{ isEmpDetail }}" hint-placeholder-val="{{ false }}">
+        <div style="max-width:900px">
+          <div onClick="{{ goEmpList }}" style="font-size:12px;color:#6b7280;cursor:pointer;margin-bottom:14px">← 사원 목록으로</div>
+          <div style="background:#ffffff;border:1px solid #e2e5ea;border-radius:10px;padding:22px 24px;display:flex;align-items:center;gap:18px;margin-bottom:16px">
+            <div style="width:56px;height:56px;border-radius:50%;background:#e8f0fe;color:#1d4ed8;display:flex;align-items:center;justify-content:center;font-size:20px;font-weight:700;flex:none">{{ emp.initial }}</div>
+            <div style="flex:1">
+              <div style="font-size:17px;font-weight:700">{{ emp.name }} <span style="font-size:13px;font-weight:400;color:#6b7280">{{ emp.position }}</span></div>
+              <div style="font-size:12.5px;color:#6b7280;margin-top:3px">{{ emp.deptLabel }} · 사번 {{ emp.empNo }}</div>
+            </div>
+            <span style="padding:3px 10px;border-radius:10px;font-size:11.5px;{{ emp.statusStyle }}">{{ emp.status }}</span>
+          </div>
+
+          <div style="display:flex;gap:4px;border-bottom:1px solid #e2e5ea;margin-bottom:16px">
+            <div onClick="{{ tabBasicClick }}" style="padding:9px 14px;font-size:12.5px;font-weight:700;cursor:pointer;color:{{ basicTabColor }};border-bottom:2px solid {{ basicTabBorder }}">기본정보</div>
+            <div onClick="{{ tabHistoryClick }}" style="padding:9px 14px;font-size:12.5px;font-weight:700;cursor:pointer;color:{{ historyTabColor }};border-bottom:2px solid {{ historyTabBorder }}">발령이력</div>
+          </div>
+
+          <sc-if value="{{ isTabBasic }}" hint-placeholder-val="{{ true }}">
+            <div style="background:#ffffff;border:1px solid #e2e5ea;border-radius:10px;padding:20px 24px;display:grid;grid-template-columns:1fr 1fr;gap:16px 32px;font-size:12.5px">
+              <div><div style="color:#9aa2ad;margin-bottom:3px">소속 본부</div><div style="font-weight:600">{{ emp.hq }}</div></div>
+              <div><div style="color:#9aa2ad;margin-bottom:3px">소속 팀</div><div style="font-weight:600">{{ emp.team }}</div></div>
+              <div><div style="color:#9aa2ad;margin-bottom:3px">직급</div><div style="font-weight:600">{{ emp.position }}</div></div>
+              <div><div style="color:#9aa2ad;margin-bottom:3px">입사일</div><div style="font-weight:600">{{ emp.joinDate }}</div></div>
+              <div><div style="color:#9aa2ad;margin-bottom:3px">연락처</div><div style="font-weight:600">{{ emp.phone }}</div></div>
+              <div><div style="color:#9aa2ad;margin-bottom:3px">이메일</div><div style="font-weight:600">{{ emp.email }}</div></div>
+            </div>
+          </sc-if>
+          <sc-if value="{{ isTabHistory }}" hint-placeholder-val="{{ false }}">
+            <div style="background:#ffffff;border:1px solid #e2e5ea;border-radius:10px;overflow:hidden">
+              <div style="display:grid;grid-template-columns:120px 100px 1fr;padding:10px 16px;background:#f7f8fa;border-bottom:1px solid #e2e5ea;font-size:11.5px;font-weight:700;color:#6b7280">
+                <div>발령일자</div><div>구분</div><div>내용</div>
+              </div>
+              <sc-for list="{{ emp.history }}" as="h" hint-placeholder-count="3">
+                <div style="display:grid;grid-template-columns:120px 100px 1fr;padding:10px 16px;border-bottom:1px solid #eef0f3;font-size:12.5px">
+                  <div style="color:#6b7280">{{ h.date }}</div>
+                  <div style="font-weight:600">{{ h.type }}</div>
+                  <div>{{ h.detail }}</div>
+                </div>
+              </sc-for>
+            </div>
+          </sc-if>
+        </div>
+      </sc-if>
+
+      <sc-if value="{{ isApList }}" hint-placeholder-val="{{ false }}">
+        <div>
+          <h1 style="font-size:20px;font-weight:700;margin:0 0 16px">전자결재</h1>
+          <div style="display:flex;gap:4px;border-bottom:1px solid #e2e5ea;margin-bottom:16px">
+            <div onClick="{{ tabDraftClick }}" style="padding:9px 16px;font-size:13px;font-weight:700;cursor:pointer;color:{{ draftTabColor }};border-bottom:2px solid {{ draftTabBorder }}">기안함 (내가 쓴 문서)</div>
+            <div onClick="{{ tabApproveClick }}" style="padding:9px 16px;font-size:13px;font-weight:700;cursor:pointer;color:{{ approveTabColor }};border-bottom:2px solid {{ approveTabBorder }}">결재함 (내가 승인할 문서)</div>
+          </div>
+
+          <sc-if value="{{ isApTabDraft }}" hint-placeholder-val="{{ true }}">
+            <div style="background:#ffffff;border:1px solid #e2e5ea;border-radius:10px;overflow:hidden">
+              <div style="display:grid;grid-template-columns:150px 1fr 100px 100px 100px;padding:10px 16px;background:#f7f8fa;border-bottom:1px solid #e2e5ea;font-size:11.5px;font-weight:700;color:#6b7280">
+                <div>문서번호</div><div>제목</div><div>기안유형</div><div>기안일</div><div>상태</div>
+              </div>
+              <sc-for list="{{ draftDocs }}" as="doc" hint-placeholder-count="6">
+                <div onClick="{{ doc.open }}" style="display:grid;grid-template-columns:150px 1fr 100px 100px 100px;padding:11px 16px;border-bottom:1px solid #eef0f3;font-size:12.5px;cursor:pointer;align-items:center" style-hover="background:#f7f8fa">
+                  <div style="color:#9aa2ad">{{ doc.no }}</div>
+                  <div style="font-weight:600">{{ doc.title }}</div>
+                  <div style="color:#6b7280">{{ doc.type }}</div>
+                  <div style="color:#6b7280">{{ doc.date }}</div>
+                  <div><span style="padding:2px 8px;border-radius:10px;font-size:11px;{{ doc.statusStyle }}">{{ doc.status }}</span></div>
+                </div>
+              </sc-for>
+            </div>
+          </sc-if>
+
+          <sc-if value="{{ isApTabApprove }}" hint-placeholder-val="{{ false }}">
+            <div style="background:#ffffff;border:1px solid #e2e5ea;border-radius:10px;overflow:hidden">
+              <div style="display:grid;grid-template-columns:150px 1fr 100px 100px 90px 100px;padding:10px 16px;background:#f7f8fa;border-bottom:1px solid #e2e5ea;font-size:11.5px;font-weight:700;color:#6b7280">
+                <div>문서번호</div><div>제목</div><div>기안자</div><div>기안유형</div><div>기안일</div><div>상태</div>
+              </div>
+              <sc-for list="{{ approveDocs }}" as="doc" hint-placeholder-count="6">
+                <div onClick="{{ doc.open }}" style="display:grid;grid-template-columns:150px 1fr 100px 100px 90px 100px;padding:11px 16px;border-bottom:1px solid #eef0f3;font-size:12.5px;cursor:pointer;align-items:center" style-hover="background:#f7f8fa">
+                  <div style="color:#9aa2ad">{{ doc.no }}</div>
+                  <div style="font-weight:600">{{ doc.title }}</div>
+                  <div style="color:#6b7280">{{ doc.drafter }}</div>
+                  <div style="color:#6b7280">{{ doc.type }}</div>
+                  <div style="color:#6b7280">{{ doc.date }}</div>
+                  <div><span style="padding:2px 8px;border-radius:10px;font-size:11px;{{ doc.statusStyle }}">{{ doc.status }}</span></div>
+                </div>
+              </sc-for>
+            </div>
+          </sc-if>
+        </div>
+      </sc-if>
+
+      <sc-if value="{{ isApCompose }}" hint-placeholder-val="{{ false }}">
+        <div style="max-width:760px">
+          <h1 style="font-size:20px;font-weight:700;margin:0 0 18px">{{ composeTitle }}</h1>
+          <div style="background:#ffffff;border:1px solid #e2e5ea;border-radius:10px;padding:24px">
+            <div style="margin-bottom:18px">
+              <div style="font-size:12px;font-weight:700;color:#6b7280;margin-bottom:8px">기안 유형</div>
+              <div style="display:flex;gap:8px;flex-wrap:wrap">
+                <sc-for list="{{ draftTypeButtons }}" as="t" hint-placeholder-count="4">
+                  <div onClick="{{ t.select }}" style="padding:8px 16px;border-radius:7px;font-size:12.5px;font-weight:600;cursor:pointer;{{ t.style }}">{{ t.type }}</div>
+                </sc-for>
+              </div>
+            </div>
+
+            <sc-if value="{{ isPurchaseBlocked }}" hint-placeholder-val="{{ false }}">
+              <div style="padding:16px;background:#fdeaea;color:#b91c1c;border:1px solid #f6c2c2;border-radius:8px;font-size:13px;font-weight:700">⚠ 물류본부 소속만 상신 가능합니다. (현재 로그인: {{ currentUser.name }} · {{ currentUser.hq }})</div>
+            </sc-if>
+
+            <sc-if value="{{ isFormVisible }}" hint-placeholder-val="{{ true }}">
+              <div style="margin-bottom:18px;padding:14px 16px;background:#f7f8fa;border-radius:8px">
+                <div style="font-size:11.5px;font-weight:700;color:#6b7280;margin-bottom:10px">결재라인 (자동 표시) · ★ 유형·조건별 분기</div>
+                <div style="display:flex;align-items:center;flex-wrap:wrap;gap:6px">
+                  <div style="padding:6px 12px;border-radius:16px;background:#1c2531;color:#fff;font-size:12px;font-weight:600">기안자 · {{ currentUser.name }}</div>
+                  <sc-for list="{{ composeLine }}" as="step" hint-placeholder-count="2">
+                    <span style="color:#c2c8d1;font-size:13px">→</span>
+                    <div style="padding:6px 12px;border-radius:16px;background:#e8f0fe;color:#1d4ed8;font-size:12px;font-weight:600;border:1px solid #bfd7fe">{{ step.role }}</div>
+                  </sc-for>
+                  <span style="color:#9aa2ad;font-size:11.5px;margin-left:6px">(종료 · 총 {{ composeStepCount }}단계)</span>
+                </div>
+              </div>
+
+              <sc-if value="{{ isExpenseType }}" hint-placeholder-val="{{ false }}">
+                <div style="margin-bottom:14px">
+                  <div style="font-size:12px;font-weight:700;color:#6b7280;margin-bottom:6px">지출 금액</div>
+                  <input type="number" value="{{ amountValue }}" onChange="{{ onAmountChange }}" placeholder="예: 4500000" style="width:100%;padding:10px 12px;border:1px solid #d7dbe0;border-radius:7px;font-size:13px;font-family:inherit"></input>
+                  <div style="font-size:11.5px;color:#9aa2ad;margin-top:5px">{{ currentUser.team }} 예산 {{ budgetLabel }} · 80% 기준 {{ thresholdLabel }} · {{ thresholdNote }}</div>
+                </div>
+              </sc-if>
+
+              <sc-if value="{{ isPurchaseType }}" hint-placeholder-val="{{ false }}">
+                <div style="margin-bottom:14px">
+                  <div style="font-size:12px;font-weight:700;color:#6b7280;margin-bottom:8px">품목 선택</div>
+                  <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:10px">
+                    <sc-for list="{{ purchaseItemButtons }}" as="pi" hint-placeholder-count="4">
+                      <div onClick="{{ pi.select }}" style="padding:8px 14px;border-radius:7px;font-size:12.5px;font-weight:600;cursor:pointer;{{ pi.style }}">{{ pi.name }}</div>
+                    </sc-for>
+                  </div>
+                  <sc-if value="{{ hasSelectedItem }}" hint-placeholder-val="{{ false }}">
+                    <div style="padding:12px 16px;border-radius:8px;{{ selectedItemNoteStyle }}">
+                      <span style="font-weight:700">{{ selectedItem.name }}</span> 현재고 {{ selectedItem.stock }} / 안전재고 {{ selectedItem.safety }}
+                      <sc-if value="{{ selectedItem.isLow }}" hint-placeholder-val="{{ false }}">
+                        <span style="font-weight:700"> · 재고 부족으로 인한 구매요청</span>
+                      </sc-if>
+                    </div>
+                  </sc-if>
+                </div>
+              </sc-if>
+
+              <div style="margin-bottom:14px">
+                <div style="font-size:12px;font-weight:700;color:#6b7280;margin-bottom:6px">제목</div>
+                <input type="text" placeholder="기안 제목을 입력하세요" style="width:100%;padding:10px 12px;border:1px solid #d7dbe0;border-radius:7px;font-size:13px;font-family:inherit"></input>
+              </div>
+              <div style="margin-bottom:14px">
+                <div style="font-size:12px;font-weight:700;color:#6b7280;margin-bottom:6px">내용</div>
+                <textarea placeholder="기안 내용을 입력하세요" style="width:100%;height:140px;padding:10px 12px;border:1px solid #d7dbe0;border-radius:7px;font-size:13px;font-family:inherit;resize:vertical"></textarea>
+              </div>
+              <div style="margin-bottom:20px">
+                <div style="font-size:12px;font-weight:700;color:#6b7280;margin-bottom:6px">첨부파일</div>
+                <div style="border:1px dashed #d7dbe0;border-radius:7px;padding:14px;font-size:12px;color:#9aa2ad;text-align:center">파일을 끌어다 놓거나 클릭하여 첨부</div>
+              </div>
+              <div style="display:flex;gap:8px;justify-content:flex-end">
+                <div onClick="{{ goApList }}" style="padding:9px 18px;border-radius:7px;border:1px solid #d7dbe0;font-size:12.5px;font-weight:600;cursor:pointer;color:#6b7280">임시저장</div>
+                <div onClick="{{ goApList }}" style="padding:9px 18px;border-radius:7px;background:#2f6fed;color:#fff;font-size:12.5px;font-weight:700;cursor:pointer">상신하기</div>
+              </div>
+            </sc-if>
+          </div>
+        </div>
+      </sc-if>
+
+      <sc-if value="{{ isApDetail }}" hint-placeholder-val="{{ false }}">
+        <div style="max-width:760px">
+          <div onClick="{{ goApList }}" style="font-size:12px;color:#6b7280;cursor:pointer;margin-bottom:14px">← 목록으로</div>
+          <div style="background:#ffffff;border:1px solid #e2e5ea;border-radius:10px;padding:24px;margin-bottom:16px">
+            <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:16px">
+              <div>
+                <div style="font-size:11.5px;color:#9aa2ad;margin-bottom:4px">{{ doc.no }} · {{ doc.type }}</div>
+                <div style="font-size:17px;font-weight:700">{{ doc.title }}</div>
+              </div>
+              <span style="padding:4px 12px;border-radius:12px;font-size:12px;{{ doc.statusStyle }}">{{ doc.status }}</span>
+            </div>
+            <div style="font-size:12.5px;color:#6b7280;margin-bottom:16px">기안일 {{ doc.date }} · 기안자 {{ doc.drafterLabel }}</div>
+            <div style="font-size:13px;line-height:1.7;padding:14px 16px;background:#f7f8fa;border-radius:8px">{{ doc.content }}</div>
+          </div>
+
+          <div style="background:#ffffff;border:1px solid #e2e5ea;border-radius:10px;padding:24px;margin-bottom:16px">
+            <div style="font-size:12.5px;font-weight:700;color:#6b7280;margin-bottom:18px">결재 진행 현황</div>
+            <div style="display:flex;align-items:flex-start;overflow-x:auto;padding-bottom:4px">
+              <sc-for list="{{ doc.steps }}" as="step" hint-placeholder-count="3">
+                <div style="display:flex;align-items:center;flex:none">
+                  <div style="display:flex;flex-direction:column;align-items:center;gap:8px;width:96px">
+                    <div style="width:34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;{{ step.style }}">{{ step.mark }}</div>
+                    <div style="font-size:12px;font-weight:700;text-align:center">{{ step.name }}</div>
+                    <div style="font-size:10.5px;color:#9aa2ad;text-align:center">{{ step.role }}</div>
+                    <div style="font-size:10px;text-align:center;{{ step.tagStyle }};padding:1px 7px;border-radius:8px">{{ step.status }}</div>
+                  </div>
+                  <sc-if value="{{ step.hasArrow }}" hint-placeholder-val="{{ false }}">
+                    <div style="width:40px;height:2px;background:#d7dbe0;margin-bottom:38px"></div>
+                  </sc-if>
+                </div>
+              </sc-for>
+            </div>
+            <sc-if value="{{ doc.isRejected }}" hint-placeholder-val="{{ false }}">
+              <div style="margin-top:16px;padding:14px 16px;background:#fdeaea;border:1px solid #f6c2c2;border-radius:8px">
+                <div style="font-size:11.5px;font-weight:700;color:#b91c1c;margin-bottom:6px">반려 사유 · 최민준 (본부장)</div>
+                <div style="font-size:13px;line-height:1.6;color:#8a1f1f">{{ doc.rejectReason }}</div>
+              </div>
+            </sc-if>
+          </div>
+
+          <sc-if value="{{ doc.canAct }}" hint-placeholder-val="{{ false }}">
+            <div style="background:#ffffff;border:1px solid #e2e5ea;border-radius:10px;padding:24px">
+              <div style="font-size:12px;font-weight:700;color:#6b7280;margin-bottom:8px">결재 의견</div>
+              <textarea placeholder="결재 의견을 입력하세요 (선택)" style="width:100%;height:76px;padding:10px 12px;border:1px solid #d7dbe0;border-radius:7px;font-size:13px;font-family:inherit;resize:vertical;margin-bottom:14px"></textarea>
+              <div style="display:flex;gap:8px;justify-content:flex-end">
+                <div onClick="{{ goApList }}" style="padding:9px 18px;border-radius:7px;background:#fdeaea;color:#b91c1c;font-size:12.5px;font-weight:700;cursor:pointer;border:1px solid #f6c2c2">반려</div>
+                <div onClick="{{ goApList }}" style="padding:9px 18px;border-radius:7px;background:#2f6fed;color:#fff;font-size:12.5px;font-weight:700;cursor:pointer">승인</div>
+              </div>
+            </div>
+          </sc-if>
+        </div>
+      </sc-if>
+
+      <sc-if value="{{ isAttCalendar }}" hint-placeholder-val="{{ false }}">
+        <div style="max-width:1040px">
+          <h1 style="font-size:20px;font-weight:700;margin:0 0 4px">출퇴근 기록</h1>
+          <p style="font-size:12.5px;color:#6b7280;margin:0 0 18px">2026년 9월 · {{ currentUser.name }} {{ currentUser.position }}</p>
+
+          <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:12px;margin-bottom:20px">
+            <div style="background:#ffffff;border:1px solid #e2e5ea;border-radius:10px;padding:14px 16px">
+              <div style="font-size:11px;color:#9aa2ad;margin-bottom:6px">정상출근</div>
+              <div style="font-size:20px;font-weight:700;color:#15803d">{{ attSummary.normal }}일</div>
+            </div>
+            <div style="background:#ffffff;border:1px solid #e2e5ea;border-radius:10px;padding:14px 16px">
+              <div style="font-size:11px;color:#9aa2ad;margin-bottom:6px">지각</div>
+              <div style="font-size:20px;font-weight:700;color:#b45309">{{ attSummary.late }}회</div>
+            </div>
+            <div style="background:#ffffff;border:1px solid #e2e5ea;border-radius:10px;padding:14px 16px">
+              <div style="font-size:11px;color:#9aa2ad;margin-bottom:6px">조퇴</div>
+              <div style="font-size:20px;font-weight:700;color:#c2410c">{{ attSummary.early }}회</div>
+            </div>
+            <div style="background:#ffffff;border:1px solid #e2e5ea;border-radius:10px;padding:14px 16px">
+              <div style="font-size:11px;color:#9aa2ad;margin-bottom:6px">결근</div>
+              <div style="font-size:20px;font-weight:700;color:#b91c1c">{{ attSummary.absent }}회</div>
+            </div>
+            <div style="background:#ffffff;border:1px solid #e2e5ea;border-radius:10px;padding:14px 16px">
+              <div style="font-size:11px;color:#9aa2ad;margin-bottom:6px">휴가(승인)</div>
+              <div style="font-size:20px;font-weight:700;color:#1d4ed8">{{ attSummary.leave }}일</div>
+            </div>
+          </div>
+
+          <div style="background:#ffffff;border:1px solid #e2e5ea;border-radius:10px;padding:20px;overflow:hidden">
+            <div style="display:grid;grid-template-columns:repeat(7,1fr);gap:8px;margin-bottom:8px">
+              <sc-for list="{{ weekdayLabels }}" as="wd" hint-placeholder-count="7">
+                <div style="text-align:center;font-size:11.5px;font-weight:700;color:#9aa2ad;padding:4px 0">{{ wd.label }}</div>
+              </sc-for>
+            </div>
+            <div style="display:grid;grid-template-columns:repeat(7,1fr);gap:8px">
+              <sc-for list="{{ calendarCells }}" as="cell" hint-placeholder-count="35">
+                <div style="min-height:74px;border-radius:8px;padding:6px 8px;{{ cell.style }}">
+                  <sc-if value="{{ cell.hasDay }}" hint-placeholder-val="{{ false }}">
+                    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px">
+                      <span style="font-size:12px;font-weight:700;{{ cell.dayColor }}">{{ cell.day }}</span>
+                      <sc-if value="{{ cell.isToday }}" hint-placeholder-val="{{ false }}">
+                        <span style="font-size:9px;font-weight:700;color:#2f6fed">오늘</span>
+                      </sc-if>
+                    </div>
+                    <sc-if value="{{ cell.hasStatus }}" hint-placeholder-val="{{ false }}">
+                      <div style="font-size:10.5px;font-weight:700;padding:2px 6px;border-radius:8px;display:inline-block;{{ cell.badgeStyle }}">{{ cell.statusLabel }}</div>
+                      <sc-if value="{{ cell.hasTime }}" hint-placeholder-val="{{ false }}">
+                        <div style="font-size:9.5px;color:#9aa2ad;margin-top:3px">{{ cell.timeLabel }}</div>
+                      </sc-if>
+                      <sc-if value="{{ cell.hasDoc }}" hint-placeholder-val="{{ false }}">
+                        <div style="font-size:9px;color:#1d4ed8;margin-top:3px">{{ cell.doc }} 연동</div>
+                      </sc-if>
+                    </sc-if>
+                  </sc-if>
+                </div>
+              </sc-for>
+            </div>
+          </div>
+
+          <div style="display:flex;gap:16px;flex-wrap:wrap;margin-top:14px">
+            <sc-for list="{{ attLegend }}" as="lg" hint-placeholder-count="6">
+              <div style="display:flex;align-items:center;gap:6px;font-size:11.5px;color:#6b7280">
+                <div style="width:10px;height:10px;border-radius:3px;{{ lg.dotStyle }}"></div>{{ lg.label }}
+              </div>
+            </sc-for>
+          </div>
+        </div>
+      </sc-if>
+
+      <sc-if value="{{ isAttLeave }}" hint-placeholder-val="{{ false }}">
+        <div style="max-width:760px">
+          <h1 style="font-size:20px;font-weight:700;margin:0 0 18px">휴가 신청</h1>
+          <div style="background:#ffffff;border:1px solid #e2e5ea;border-radius:10px;padding:24px">
+
+            <sc-if value="{{ leaveSubmitted }}" hint-placeholder-val="{{ false }}">
+              <div style="padding:16px;background:#e6f6ec;border:1px solid #bfe8cc;border-radius:8px;margin-bottom:18px">
+                <div style="font-size:13px;font-weight:700;color:#15803d;margin-bottom:4px">✓ 전자결재 기안함에 상신되었습니다</div>
+                <div style="font-size:12.5px;color:#2f6f4a;line-height:1.6">문서번호가 자동 채번되며, 팀장 승인 완료 시 근태관리 캘린더에 "휴가"로 자동 반영됩니다. (FR-3-2)</div>
+              </div>
+            </sc-if>
+
+            <div style="margin-bottom:18px">
+              <div style="font-size:12px;font-weight:700;color:#6b7280;margin-bottom:8px">휴가 종류</div>
+              <div style="display:flex;gap:8px;flex-wrap:wrap">
+                <sc-for list="{{ leaveTypeButtons }}" as="lt" hint-placeholder-count="3">
+                  <div onClick="{{ lt.select }}" style="padding:8px 16px;border-radius:7px;font-size:12.5px;font-weight:600;cursor:pointer;{{ lt.style }}">{{ lt.type }}</div>
+                </sc-for>
+              </div>
+            </div>
+
+            <sc-if value="{{ isAnnualLeave }}" hint-placeholder-val="{{ true }}">
+              <div style="margin-bottom:18px;padding:12px 16px;background:#f7f8fa;border-radius:8px;font-size:12.5px;color:#6b7280">
+                {{ currentUser.name }}님 잔여 연차 <span style="font-weight:700;color:#1a1d23">{{ leaveBalanceLabel }}</span>
+              </div>
+            </sc-if>
+
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:18px">
+              <div>
+                <div style="font-size:12px;font-weight:700;color:#6b7280;margin-bottom:6px">시작일</div>
+                <input type="date" value="{{ leaveDate }}" onChange="{{ onLeaveDateChange }}" style="width:100%;padding:10px 12px;border:1px solid #d7dbe0;border-radius:7px;font-size:13px;font-family:inherit"></input>
+              </div>
+              <div>
+                <div style="font-size:12px;font-weight:700;color:#6b7280;margin-bottom:6px">종료일</div>
+                <input type="date" value="{{ leaveDate }}" style="width:100%;padding:10px 12px;border:1px solid #d7dbe0;border-radius:7px;font-size:13px;font-family:inherit"></input>
+              </div>
+            </div>
+
+            <div style="margin-bottom:20px;padding:14px 16px;background:#f7f8fa;border-radius:8px">
+              <div style="font-size:11.5px;font-weight:700;color:#6b7280;margin-bottom:10px">결재라인 (전자결재 모듈 로직 재사용 · 휴가신청 = 2단계 고정)</div>
+              <div style="display:flex;align-items:center;flex-wrap:wrap;gap:6px">
+                <div style="padding:6px 12px;border-radius:16px;background:#1c2531;color:#fff;font-size:12px;font-weight:600">기안자 · {{ currentUser.name }}</div>
+                <span style="color:#c2c8d1;font-size:13px">→</span>
+                <div style="padding:6px 12px;border-radius:16px;background:#e8f0fe;color:#1d4ed8;font-size:12px;font-weight:600;border:1px solid #bfd7fe">팀장</div>
+                <span style="color:#9aa2ad;font-size:11.5px;margin-left:6px">(종료 · 총 2단계)</span>
+              </div>
+            </div>
+
+            <div style="margin-bottom:20px">
+              <div style="font-size:12px;font-weight:700;color:#6b7280;margin-bottom:6px">사유</div>
+              <textarea placeholder="휴가 사유를 입력하세요" style="width:100%;height:90px;padding:10px 12px;border:1px solid #d7dbe0;border-radius:7px;font-size:13px;font-family:inherit;resize:vertical"></textarea>
+            </div>
+
+            <div style="display:flex;gap:8px;justify-content:flex-end">
+              <div onClick="{{ goAttCalendar }}" style="padding:9px 18px;border-radius:7px;border:1px solid #d7dbe0;font-size:12.5px;font-weight:600;cursor:pointer;color:#6b7280">취소</div>
+              <div onClick="{{ submitLeave }}" style="padding:9px 18px;border-radius:7px;background:#2f6fed;color:#fff;font-size:12.5px;font-weight:700;cursor:pointer">전자결재로 상신하기</div>
+            </div>
+          </div>
+        </div>
+      </sc-if>
+
+      <sc-if value="{{ isAttBalance }}" hint-placeholder-val="{{ false }}">
+        <div>
+          <h1 style="font-size:20px;font-weight:700;margin:0 0 4px">연차 잔여일수</h1>
+          <p style="font-size:12.5px;color:#6b7280;margin:0 0 18px">사원을 선택하면 아래에서 최근 사용 이력을 볼 수 있습니다</p>
+          <div style="background:#ffffff;border:1px solid #e2e5ea;border-radius:10px;overflow:hidden;margin-bottom:20px">
+            <div style="display:grid;grid-template-columns:90px 1fr 70px 90px 90px 90px;padding:10px 16px;background:#f7f8fa;border-bottom:1px solid #e2e5ea;font-size:11.5px;font-weight:700;color:#6b7280">
+              <div>이름</div><div>소속</div><div>직급</div><div>발생일수</div><div>사용일수</div><div>잔여일수</div>
+            </div>
+            <sc-for list="{{ leaveBalanceRows }}" as="row" hint-placeholder-count="8">
+              <div onClick="{{ row.select }}" style="display:grid;grid-template-columns:90px 1fr 70px 90px 90px 90px;padding:10px 16px;border-bottom:1px solid #eef0f3;font-size:12.5px;cursor:pointer;align-items:center;{{ row.rowStyle }}">
+                <div style="font-weight:700">{{ row.name }}</div>
+                <div style="color:#6b7280">{{ row.deptLabel }}</div>
+                <div>{{ row.position }}</div>
+                <div>{{ row.granted }}일</div>
+                <div>{{ row.used }}일</div>
+                <div style="font-weight:700;color:#1d4ed8">{{ row.remaining }}일</div>
+              </div>
+            </sc-for>
+          </div>
+
+          <div style="background:#ffffff;border:1px solid #e2e5ea;border-radius:10px;padding:20px 24px">
+            <div style="font-size:13px;font-weight:700;margin-bottom:12px">{{ balanceEmp.name }} 최근 사용 이력</div>
+            <sc-if value="{{ hasLeaveHistory }}" hint-placeholder-val="{{ true }}">
+              <div style="display:grid;grid-template-columns:110px 80px 1fr 130px;padding:9px 0;border-bottom:1px solid #eef0f3;font-size:11.5px;font-weight:700;color:#9aa2ad">
+                <div>날짜</div><div>종류</div><div>상태</div><div>연동 문서</div>
+              </div>
+              <sc-for list="{{ balanceEmpHistory }}" as="h" hint-placeholder-count="3">
+                <div style="display:grid;grid-template-columns:110px 80px 1fr 130px;padding:10px 0;border-bottom:1px solid #eef0f3;font-size:12.5px;align-items:center">
+                  <div style="color:#6b7280">{{ h.date }}</div>
+                  <div style="font-weight:600">{{ h.type }}</div>
+                  <div><span style="padding:2px 8px;border-radius:10px;font-size:11px;{{ h.statusStyle }}">{{ h.status }}</span></div>
+                  <div style="color:#9aa2ad">{{ h.doc }}</div>
+                </div>
+              </sc-for>
+            </sc-if>
+            <sc-if value="{{ hasNoLeaveHistory }}" hint-placeholder-val="{{ false }}">
+              <div style="font-size:12.5px;color:#9aa2ad;padding:12px 0">최근 사용 이력이 없습니다.</div>
+            </sc-if>
+          </div>
+        </div>
+      </sc-if>
+
+      <sc-if value="{{ isBudgetDashboard }}" hint-placeholder-val="{{ false }}">
+        <div style="max-width:1080px">
+          <h1 style="font-size:20px;font-weight:700;margin:0 0 4px">부서별 예산 현황</h1>
+          <p style="font-size:12.5px;color:#6b7280;margin:0 0 18px">2026년 · 승인된 지출결의서 기준 자동 차감 (FR-4-2) · 소진율 80% 이상 경고 표시</p>
+          <div style="background:#ffffff;border:1px solid #e2e5ea;border-radius:10px;overflow:hidden">
+            <sc-for list="{{ budgetRows }}" as="b" hint-placeholder-count="8">
+              <div onClick="{{ b.select }}" style="padding:14px 18px;border-bottom:1px solid #eef0f3;cursor:pointer;display:flex;flex-direction:column;gap:8px;{{ b.rowStyle }}" style-hover="background:#f7f8fa">
+                <div style="display:flex;justify-content:space-between;align-items:baseline;gap:8px">
+                  <div><span style="font-weight:700;font-size:13.5px">{{ b.team }}</span><span style="color:#9aa2ad;font-size:11.5px;margin-left:6px">{{ b.hq }}</span></div>
+                  <div style="color:#9aa2ad;font-size:11.5px;white-space:nowrap">상세 →</div>
+                </div>
+                <div style="display:flex;gap:14px;flex-wrap:wrap;font-size:11.5px;color:#6b7280">
+                  <div>배정 {{ b.budgetLabel }}</div><div>집행 {{ b.usedLabel }}</div><div>잔여 {{ b.remainingLabel }}</div>
+                </div>
+                <div style="display:flex;align-items:center;gap:10px">
+                  <div style="flex:1;min-width:60px;height:8px;border-radius:4px;background:#eef0f3;overflow:hidden">
+                    <div style="height:100%;width:{{ b.pct }}%;{{ b.barStyle }}"></div>
+                  </div>
+                  <span style="font-size:12px;font-weight:700;padding:2px 10px;border-radius:10px;white-space:nowrap;{{ b.badgeStyle }}">{{ b.rateLabel }}</span>
+                </div>
+              </div>
+            </sc-for>
+          </div>
+        </div>
+      </sc-if>
+
+      <sc-if value="{{ isBudgetDetail }}" hint-placeholder-val="{{ false }}">
+        <div style="max-width:900px">
+          <div onClick="{{ goBudgetDashboard }}" style="font-size:12px;color:#6b7280;cursor:pointer;margin-bottom:14px">← 예산 현황으로</div>
+          <h1 style="font-size:20px;font-weight:700;margin:0 0 4px">{{ budgetDetail.team }} 지출 내역</h1>
+          <p style="font-size:12.5px;color:#6b7280;margin:0 0 18px">{{ budgetDetail.hq }}</p>
+          <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:20px">
+            <div style="background:#ffffff;border:1px solid #e2e5ea;border-radius:10px;padding:14px 16px">
+              <div style="font-size:11px;color:#9aa2ad;margin-bottom:6px">예산 배정액</div>
+              <div style="font-size:19px;font-weight:700">{{ budgetDetail.budgetLabel }}</div>
+            </div>
+            <div style="background:#ffffff;border:1px solid #e2e5ea;border-radius:10px;padding:14px 16px">
+              <div style="font-size:11px;color:#9aa2ad;margin-bottom:6px">집행액 (승인 기준)</div>
+              <div style="font-size:19px;font-weight:700;{{ budgetDetail.usedColor }}">{{ budgetDetail.usedLabel }}</div>
+            </div>
+            <div style="background:#ffffff;border:1px solid #e2e5ea;border-radius:10px;padding:14px 16px">
+              <div style="font-size:11px;color:#9aa2ad;margin-bottom:6px">잔여액</div>
+              <div style="font-size:19px;font-weight:700">{{ budgetDetail.remainingLabel }}</div>
+            </div>
+          </div>
+          <div style="background:#ffffff;border:1px solid #e2e5ea;border-radius:10px;overflow:hidden">
+            <div style="display:grid;grid-template-columns:100px 1fr 120px 90px 130px;padding:10px 16px;background:#f7f8fa;border-bottom:1px solid #e2e5ea;font-size:11.5px;font-weight:700;color:#6b7280">
+              <div>날짜</div><div>항목</div><div>금액</div><div>결재상태</div><div>연동 문서번호</div>
+            </div>
+            <sc-for list="{{ budgetDetail.records }}" as="r" hint-placeholder-count="4">
+              <div style="display:grid;grid-template-columns:100px 1fr 120px 90px 130px;padding:11px 16px;border-bottom:1px solid #eef0f3;font-size:12.5px;align-items:center">
+                <div style="color:#6b7280">{{ r.date }}</div>
+                <div style="font-weight:600">{{ r.title }}</div>
+                <div>{{ r.amountLabel }}</div>
+                <div><span style="padding:2px 8px;border-radius:10px;font-size:11px;{{ r.statusStyle }}">{{ r.status }}</span></div>
+                <div style="color:#9aa2ad">{{ r.linked }}</div>
+              </div>
+            </sc-for>
+          </div>
+        </div>
+      </sc-if>
+
+      <sc-if value="{{ isInvList }}" hint-placeholder-val="{{ false }}">
+        <div>
+          <h1 style="font-size:20px;font-weight:700;margin:0 0 4px">품목별 재고 현황</h1>
+          <p style="font-size:12.5px;color:#6b7280;margin:0 0 18px">재고관리 담당 홍유진 과장 · 현재고가 안전재고 이하인 품목은 경고 표시</p>
+          <div style="background:#ffffff;border:1px solid #e2e5ea;border-radius:10px;overflow:hidden">
+            <sc-for list="{{ items }}" as="it" hint-placeholder-count="10">
+              <div onClick="{{ it.select }}" style="padding:13px 18px;border-bottom:1px solid #eef0f3;cursor:pointer;display:flex;flex-direction:column;gap:6px" style-hover="background:#f7f8fa">
+                <div style="display:flex;justify-content:space-between;align-items:baseline;gap:8px">
+                  <div><span style="font-weight:700;font-size:13.5px">{{ it.name }}</span><span style="color:#9aa2ad;font-size:11.5px;margin-left:6px">{{ it.category }}</span></div>
+                  <span style="padding:2px 10px;border-radius:10px;font-size:11px;white-space:nowrap;{{ it.badgeStyle }}">{{ it.badgeLabel }}</span>
+                </div>
+                <div style="display:flex;gap:14px;flex-wrap:wrap;font-size:11.5px;color:#6b7280">
+                  <div>입고 {{ it.inQty }}</div><div>출고 {{ it.outQty }}</div><div>현재고 <span style="font-weight:700;{{ it.stockColor }}">{{ it.stock }}</span></div><div>안전재고 {{ it.safety }}</div>
+                </div>
+              </div>
+            </sc-for>
+          </div>
+        </div>
+      </sc-if>
+
+      <sc-if value="{{ isInvDetail }}" hint-placeholder-val="{{ false }}">
+        <div style="max-width:780px">
+          <div onClick="{{ goInvList }}" style="font-size:12px;color:#6b7280;cursor:pointer;margin-bottom:14px">← 재고 현황으로</div>
+          <div style="background:#ffffff;border:1px solid #e2e5ea;border-radius:10px;padding:22px 24px;display:flex;align-items:center;justify-content:space-between;margin-bottom:16px">
+            <div>
+              <div style="font-size:17px;font-weight:700">{{ invItem.name }}</div>
+              <div style="font-size:12.5px;color:#6b7280;margin-top:3px">{{ invItem.category }} · 현재고 {{ invItem.stock }} / 안전재고 {{ invItem.safety }}</div>
+            </div>
+            <span style="padding:3px 10px;border-radius:10px;font-size:11.5px;{{ invItem.badgeStyle }}">{{ invItem.badgeLabel }}</span>
+          </div>
+          <div style="background:#ffffff;border:1px solid #e2e5ea;border-radius:10px;overflow:hidden">
+            <div style="display:grid;grid-template-columns:100px 90px 90px 1fr;padding:10px 16px;background:#f7f8fa;border-bottom:1px solid #e2e5ea;font-size:11.5px;font-weight:700;color:#6b7280">
+              <div>날짜</div><div>구분</div><div>수량</div><div>비고</div>
+            </div>
+            <sc-for list="{{ invItem.history }}" as="h" hint-placeholder-count="3">
+              <div style="display:grid;grid-template-columns:100px 90px 90px 1fr;padding:10px 16px;border-bottom:1px solid #eef0f3;font-size:12.5px">
+                <div style="color:#6b7280">{{ h.date }}</div>
+                <div style="font-weight:600">{{ h.type }}</div>
+                <div>{{ h.qty }}</div>
+                <div style="color:#6b7280">{{ h.note }}</div>
+              </div>
+            </sc-for>
+          </div>
+        </div>
+      </sc-if>
+
+      <sc-if value="{{ isInvTracking }}" hint-placeholder-val="{{ false }}">
+        <div style="max-width:900px">
+          <h1 style="font-size:20px;font-weight:700;margin:0 0 4px">구매 진행 상태 트래킹</h1>
+          <p style="font-size:12.5px;color:#6b7280;margin:0 0 18px">전자결재 승인 완료된 구매요청서 · 입고 완료 시 재고 자동 반영 (FR-5-3)</p>
+          <sc-if value="{{ receiveToast }}" hint-placeholder-val="{{ false }}">
+            <div style="padding:12px 16px;background:#e6f6ec;border:1px solid #bfe8cc;border-radius:8px;color:#15803d;font-size:12.5px;font-weight:700;margin-bottom:16px">{{ receiveToast }}</div>
+          </sc-if>
+          <div style="display:flex;flex-direction:column;gap:14px">
+            <sc-for list="{{ trackingOrders }}" as="o" hint-placeholder-count="3">
+              <div style="background:#ffffff;border:1px solid #e2e5ea;border-radius:10px;padding:20px 22px">
+                <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:16px">
+                  <div>
+                    <div style="font-size:11.5px;color:#9aa2ad;margin-bottom:3px">{{ o.no }} · {{ o.item }} {{ o.qty }}{{ o.unit }}</div>
+                    <div style="font-size:14.5px;font-weight:700">{{ o.title }}</div>
+                    <div style="font-size:12px;color:#6b7280;margin-top:3px">기안자 {{ o.requester }} ({{ o.team }}) · {{ o.date }}</div>
+                  </div>
+                  <sc-if value="{{ o.canReceive }}" hint-placeholder-val="{{ false }}">
+                    <div onClick="{{ o.receive }}" style="padding:8px 16px;border-radius:7px;background:#2f6fed;color:#fff;font-size:12px;font-weight:700;cursor:pointer;white-space:nowrap">입고 완료 처리</div>
+                  </sc-if>
+                </div>
+                <div style="display:flex;align-items:flex-start">
+                  <sc-for list="{{ o.steps }}" as="st" hint-placeholder-count="4">
+                    <div style="display:flex;align-items:center;flex:none">
+                      <div style="display:flex;flex-direction:column;align-items:center;gap:8px;width:110px">
+                        <div style="width:30px;height:30px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;{{ st.style }}">{{ st.mark }}</div>
+                        <div style="font-size:11.5px;font-weight:700;text-align:center;{{ st.labelColor }}">{{ st.label }}</div>
+                      </div>
+                      <sc-if value="{{ st.hasArrow }}" hint-placeholder-val="{{ false }}">
+                        <div style="width:36px;height:2px;background:#d7dbe0;margin-bottom:30px"></div>
+                      </sc-if>
+                    </div>
+                  </sc-for>
+                </div>
+                <sc-if value="{{ o.justReceived }}" hint-placeholder-val="{{ false }}">
+                  <div style="margin-top:14px;padding:10px 14px;background:#e8f0fe;border:1px solid #bfd7fe;border-radius:8px;font-size:12px;color:#1d4ed8;font-weight:600">입고 완료 → {{ o.item }} 재고 +{{ o.qty }} 반영됨</div>
+                </sc-if>
+              </div>
+            </sc-for>
+          </div>
+        </div>
+      </sc-if>
+
+      <sc-if value="{{ isSalesCustomers }}" hint-placeholder-val="{{ false }}">
+        <div>
+          <h1 style="font-size:20px;font-weight:700;margin:0 0 4px">거래처 관리</h1>
+          <p style="font-size:12.5px;color:#6b7280;margin:0 0 18px">총 {{ customers.length }}개 거래처 (국내 4 · 해외 4)</p>
+          <div style="background:#ffffff;border:1px solid #e2e5ea;border-radius:10px;overflow:hidden">
+            <sc-for list="{{ customers }}" as="c" hint-placeholder-count="8">
+              <div onClick="{{ c.select }}" style="padding:13px 18px;border-bottom:1px solid #eef0f3;cursor:pointer;display:flex;flex-direction:column;gap:6px" style-hover="background:#f7f8fa">
+                <div style="display:flex;justify-content:space-between;align-items:baseline;gap:8px">
+                  <div><span style="font-weight:700;font-size:13.5px">{{ c.name }}</span><span style="color:#9aa2ad;font-size:11.5px;margin-left:6px">담당 {{ c.rep }} ({{ c.team }})</span></div>
+                  <div style="font-weight:700;font-size:13px;color:#1d4ed8;white-space:nowrap">{{ c.totalLabel }}</div>
+                </div>
+                <div style="display:flex;gap:14px;flex-wrap:wrap;font-size:11.5px;color:#6b7280">
+                  <div>담당자 {{ c.contact }}</div><div>{{ c.phone }}</div><div>최근 거래일 {{ c.lastDeal }}</div>
+                </div>
+              </div>
+            </sc-for>
+          </div>
+        </div>
+      </sc-if>
+
+      <sc-if value="{{ isSalesCustomerDetail }}" hint-placeholder-val="{{ false }}">
+        <div style="max-width:800px">
+          <div onClick="{{ goSalesCustomers }}" style="font-size:12px;color:#6b7280;cursor:pointer;margin-bottom:14px">← 거래처 목록으로</div>
+          <div style="background:#ffffff;border:1px solid #e2e5ea;border-radius:10px;padding:22px 24px;margin-bottom:16px">
+            <div style="font-size:17px;font-weight:700;margin-bottom:6px">{{ custDetail.name }}</div>
+            <div style="display:flex;gap:16px;flex-wrap:wrap;font-size:12.5px;color:#6b7280">
+              <div>담당자 {{ custDetail.contact }}</div><div>{{ custDetail.phone }}</div><div>영업 담당 {{ custDetail.rep }} ({{ custDetail.team }})</div><div>누적 거래액 <span style="font-weight:700;color:#1d4ed8">{{ custDetail.totalLabel }}</span></div>
+            </div>
+          </div>
+          <div style="background:#ffffff;border:1px solid #e2e5ea;border-radius:10px;overflow:hidden">
+            <div style="padding:14px 18px;border-bottom:1px solid #e2e5ea;font-size:12.5px;font-weight:700;color:#6b7280">거래 이력</div>
+            <sc-for list="{{ custDetail.history }}" as="h" hint-placeholder-count="3">
+              <div style="padding:12px 18px;border-bottom:1px solid #eef0f3;display:flex;justify-content:space-between;align-items:center;font-size:12.5px">
+                <div><span style="color:#9aa2ad">{{ h.date }}</span><span style="font-weight:600;margin-left:10px">{{ h.item }} {{ h.qty }}</span></div>
+                <div style="font-weight:700">{{ h.amountLabel }}</div>
+              </div>
+            </sc-for>
+          </div>
+        </div>
+      </sc-if>
+
+      <sc-if value="{{ isSalesOrder }}" hint-placeholder-val="{{ false }}">
+        <div style="max-width:760px">
+          <h1 style="font-size:20px;font-weight:700;margin:0 0 18px">수주 등록</h1>
+          <div style="background:#ffffff;border:1px solid #e2e5ea;border-radius:10px;padding:24px">
+
+            <sc-if value="{{ orderConfirmed }}" hint-placeholder-val="{{ false }}">
+              <div style="padding:16px;background:#e6f6ec;border:1px solid #bfe8cc;border-radius:8px;margin-bottom:18px">
+                <div style="font-size:13px;font-weight:700;color:#15803d;margin-bottom:4px">✓ 수주가 확정되었습니다</div>
+                <div style="font-size:12.5px;color:#2f6f4a;line-height:1.6">수주 확정 → {{ lastOrderItem }} 재고 -{{ lastOrderQty }} 반영됨, 매출 {{ lastOrderAmountLabel }} 등록 (FR-6-3)</div>
+              </div>
+            </sc-if>
+
+            <div style="margin-bottom:16px">
+              <div style="font-size:12px;font-weight:700;color:#6b7280;margin-bottom:8px">거래처 선택</div>
+              <div style="display:flex;gap:8px;flex-wrap:wrap">
+                <sc-for list="{{ customerButtons }}" as="cb" hint-placeholder-count="8">
+                  <div onClick="{{ cb.select }}" style="padding:7px 14px;border-radius:7px;font-size:12px;font-weight:600;cursor:pointer;{{ cb.style }}">{{ cb.name }}</div>
+                </sc-for>
+              </div>
+            </div>
+
+            <div style="margin-bottom:16px">
+              <div style="font-size:12px;font-weight:700;color:#6b7280;margin-bottom:8px">품목 선택</div>
+              <div style="display:flex;gap:8px;flex-wrap:wrap">
+                <sc-for list="{{ orderItemButtons }}" as="ob" hint-placeholder-count="10">
+                  <div onClick="{{ ob.select }}" style="padding:7px 14px;border-radius:7px;font-size:12px;font-weight:600;cursor:pointer;{{ ob.style }}">{{ ob.name }}</div>
+                </sc-for>
+              </div>
+            </div>
+
+            <sc-if value="{{ hasOrderItem }}" hint-placeholder-val="{{ false }}">
+              <div style="padding:12px 16px;border-radius:8px;margin-bottom:16px;{{ orderStockNoteStyle }}">
+                <span style="font-weight:700">{{ orderItem.name }}</span> 가용 재고 <span style="font-weight:700">{{ orderItem.stock }}</span>{{ orderItem.unit }} · 단가 {{ orderItem.priceLabel }}
+              </div>
+            </sc-if>
+
+            <div style="margin-bottom:16px">
+              <div style="font-size:12px;font-weight:700;color:#6b7280;margin-bottom:6px">주문 수량</div>
+              <input type="number" value="{{ orderQty }}" onChange="{{ onOrderQtyChange }}" placeholder="수량 입력" style="width:100%;padding:10px 12px;border:1px solid #d7dbe0;border-radius:7px;font-size:13px;font-family:inherit"></input>
+            </div>
+
+            <sc-if value="{{ isStockShort }}" hint-placeholder-val="{{ false }}">
+              <div style="padding:14px 16px;background:#fdeaea;border:1px solid #f6c2c2;border-radius:8px;margin-bottom:18px;font-size:12.5px;color:#b91c1c;font-weight:700">⚠ 재고 부족: 가용 재고 {{ orderItem.stock }}{{ orderItem.unit }} · 주문 수량 {{ orderQty }}{{ orderItem.unit }} — 수주 등록이 차단됩니다 (NFR-6-1)</div>
+            </sc-if>
+
+            <sc-if value="{{ canConfirmOrder }}" hint-placeholder-val="{{ false }}">
+              <div style="padding:12px 16px;background:#f7f8fa;border-radius:8px;margin-bottom:18px;font-size:12.5px;color:#4b5563">예상 매출액 <span style="font-weight:700;color:#1a1d23">{{ orderPreviewAmountLabel }}</span></div>
+            </sc-if>
+
+            <div style="display:flex;justify-content:flex-end">
+              <div onClick="{{ confirmOrder }}" style="padding:9px 20px;border-radius:7px;font-size:12.5px;font-weight:700;{{ confirmButtonStyle }}">수주 확정</div>
+            </div>
+          </div>
+        </div>
+      </sc-if>
+
+      <sc-if value="{{ isSalesDashboard }}" hint-placeholder-val="{{ false }}">
+        <div style="max-width:1000px">
+          <h1 style="font-size:20px;font-weight:700;margin:0 0 4px">월별 / 부서별 매출 현황</h1>
+          <p style="font-size:12.5px;color:#6b7280;margin:0 0 18px">2026년 4월 ~ 9월 (9월은 진행 중)</p>
+
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:20px">
+            <div style="background:#ffffff;border:1px solid #e2e5ea;border-radius:10px;padding:16px 18px">
+              <div style="font-size:11.5px;color:#9aa2ad;margin-bottom:6px">국내영업팀</div>
+              <div style="font-size:19px;font-weight:700;margin-bottom:4px">{{ salesSummary.domesticTotalLabel }}</div>
+              <div style="font-size:11.5px;color:#6b7280">수주 {{ salesSummary.domesticCount }}건</div>
+            </div>
+            <div style="background:#ffffff;border:1px solid #e2e5ea;border-radius:10px;padding:16px 18px">
+              <div style="font-size:11.5px;color:#9aa2ad;margin-bottom:6px">해외영업팀</div>
+              <div style="font-size:19px;font-weight:700;margin-bottom:4px">{{ salesSummary.overseasTotalLabel }}</div>
+              <div style="font-size:11.5px;color:#6b7280">수주 {{ salesSummary.overseasCount }}건</div>
+            </div>
+          </div>
+
+          <div style="background:#ffffff;border:1px solid #e2e5ea;border-radius:10px;padding:20px">
+            <div style="display:flex;gap:16px;margin-bottom:14px;font-size:11.5px;color:#6b7280">
+              <div style="display:flex;align-items:center;gap:6px"><div style="width:10px;height:10px;border-radius:3px;background:#2f6fed"></div>국내영업팀</div>
+              <div style="display:flex;align-items:center;gap:6px"><div style="width:10px;height:10px;border-radius:3px;background:#93c5fd"></div>해외영업팀</div>
+            </div>
+            <div style="display:flex;align-items:flex-end;gap:18px;height:180px;padding:0 6px">
+              <sc-for list="{{ salesMonthly }}" as="m" hint-placeholder-count="6">
+                <div style="display:flex;flex-direction:column;align-items:center;gap:6px;flex:1">
+                  <div style="display:flex;align-items:flex-end;gap:4px;height:150px">
+                    <div style="width:16px;height:{{ m.domesticH }}px;background:#2f6fed;border-radius:3px 3px 0 0"></div>
+                    <div style="width:16px;height:{{ m.overseasH }}px;background:#93c5fd;border-radius:3px 3px 0 0"></div>
+                  </div>
+                  <div style="font-size:11px;color:#9aa2ad">{{ m.month }}</div>
+                </div>
+              </sc-for>
+            </div>
+          </div>
+        </div>
+      </sc-if>
+
+    </div>
+  </div>
+</div>
+
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+const EMPLOYEES = [
+{id:'E001',empNo:'20180045',name:'김도윤',position:'부장',hq:'경영지원본부',team:'인사팀',joinDate:'2018-03-02',status:'재직',phone:'010-1234-5601',email:'dykim@hanbit.co.kr',history:[
+  {date:'2018-03-02',type:'입사',detail:'인사팀 사원'},
+  {date:'2019-07-01',type:'승진',detail:'사원 → 대리'},
+  {date:'2021-01-01',type:'전보',detail:'인사팀 → 총무팀'},
+  {date:'2022-03-01',type:'승진',detail:'대리 → 과장'},
+  {date:'2024-01-01',type:'전보',detail:'총무팀 → 인사팀'},
+  {date:'2025-01-01',type:'승진',detail:'과장 → 부장'},
+]},
+{id:'E002',empNo:'20190112',name:'이서연',position:'과장',hq:'경영지원본부',team:'인사팀',joinDate:'2019-05-13',status:'재직',phone:'010-1234-5602',email:'sylee@hanbit.co.kr',history:[
+  {date:'2019-05-13',type:'입사',detail:'인사팀 사원'},{date:'2021-05-13',type:'승진',detail:'사원 → 대리'},{date:'2024-05-13',type:'승진',detail:'대리 → 과장'},
+]},
+{id:'E003',empNo:'20220301',name:'박지훈',position:'대리',hq:'경영지원본부',team:'인사팀',joinDate:'2022-03-01',status:'재직',phone:'010-1234-5603',email:'jhpark@hanbit.co.kr',history:[{date:'2022-03-01',type:'입사',detail:'인사팀 사원'},{date:'2024-03-01',type:'승진',detail:'사원 → 대리'}]},
+{id:'E004',empNo:'20150022',name:'최민준',position:'부장',hq:'경영지원본부',team:'회계팀',joinDate:'2015-02-16',status:'재직',phone:'010-1234-5604',email:'mjchoi@hanbit.co.kr',history:[{date:'2015-02-16',type:'입사',detail:'회계팀 대리'}]},
+{id:'E005',empNo:'20200087',name:'정하은',position:'과장',hq:'경영지원본부',team:'회계팀',joinDate:'2020-06-01',status:'재직',phone:'010-1234-5605',email:'hejung@hanbit.co.kr',history:[{date:'2020-06-01',type:'입사',detail:'회계팀 사원'}]},
+{id:'E006',empNo:'20230019',name:'강지우',position:'사원',hq:'경영지원본부',team:'회계팀',joinDate:'2023-08-21',status:'재직',phone:'010-1234-5606',email:'jwkang@hanbit.co.kr',history:[{date:'2023-08-21',type:'입사',detail:'회계팀 사원'}]},
+{id:'E007',empNo:'20180199',name:'윤서준',position:'과장',hq:'경영지원본부',team:'총무팀',joinDate:'2018-09-10',status:'휴직',phone:'010-1234-5607',email:'sjyoon@hanbit.co.kr',history:[{date:'2018-09-10',type:'입사',detail:'총무팀 사원'},{date:'2026-06-01',type:'휴직',detail:'육아휴직'}]},
+{id:'E008',empNo:'20210044',name:'임수아',position:'대리',hq:'경영지원본부',team:'총무팀',joinDate:'2021-04-05',status:'재직',phone:'010-1234-5608',email:'salim@hanbit.co.kr',history:[{date:'2021-04-05',type:'입사',detail:'총무팀 사원'}]},
+{id:'E009',empNo:'20120033',name:'한지호',position:'부장',hq:'영업본부',team:'국내영업팀',joinDate:'2012-03-19',status:'재직',phone:'010-1234-5609',email:'jhhan@hanbit.co.kr',history:[{date:'2012-03-19',type:'입사',detail:'국내영업팀 대리'}]},
+{id:'E010',empNo:'20190077',name:'오예은',position:'과장',hq:'영업본부',team:'국내영업팀',joinDate:'2019-02-18',status:'재직',phone:'010-1234-5610',email:'yeoh@hanbit.co.kr',history:[{date:'2019-02-18',type:'입사',detail:'국내영업팀 사원'},{date:'2021-02-18',type:'승진',detail:'사원 → 대리'},{date:'2024-02-18',type:'승진',detail:'대리 → 과장'}]},
+{id:'E011',empNo:'20220056',name:'서준영',position:'대리',hq:'영업본부',team:'국내영업팀',joinDate:'2022-05-30',status:'재직',phone:'010-1234-5611',email:'jyseo@hanbit.co.kr',history:[{date:'2022-05-30',type:'입사',detail:'국내영업팀 사원'}]},
+{id:'E012',empNo:'20240012',name:'신아름',position:'사원',hq:'영업본부',team:'국내영업팀',joinDate:'2024-01-08',status:'재직',phone:'010-1234-5612',email:'arshin@hanbit.co.kr',history:[{date:'2024-01-08',type:'입사',detail:'국내영업팀 사원'}]},
+{id:'E013',empNo:'20140091',name:'조현우',position:'차장',hq:'영업본부',team:'해외영업팀',joinDate:'2014-11-03',status:'재직',phone:'010-1234-5613',email:'hwcho@hanbit.co.kr',history:[{date:'2014-11-03',type:'입사',detail:'해외영업팀 대리'}]},
+{id:'E014',empNo:'20210099',name:'배수빈',position:'대리',hq:'영업본부',team:'해외영업팀',joinDate:'2021-09-15',status:'재직',phone:'010-1234-5614',email:'sbbae@hanbit.co.kr',history:[{date:'2021-09-15',type:'입사',detail:'해외영업팀 사원'}]},
+{id:'E015',empNo:'20160045',name:'문성민',position:'과장',hq:'물류본부',team:'구매팀',joinDate:'2016-07-11',status:'재직',phone:'010-1234-5615',email:'smmoon@hanbit.co.kr',history:[{date:'2016-07-11',type:'입사',detail:'구매팀 사원'}]},
+{id:'E016',empNo:'20220133',name:'송지안',position:'대리',hq:'물류본부',team:'구매팀',joinDate:'2022-10-04',status:'재직',phone:'010-1234-5616',email:'jasong@hanbit.co.kr',history:[{date:'2022-10-04',type:'입사',detail:'구매팀 사원'}]},
+{id:'E017',empNo:'20170028',name:'홍유진',position:'과장',hq:'물류본부',team:'재고관리팀',joinDate:'2017-01-23',status:'재직',phone:'010-1234-5617',email:'yjhong@hanbit.co.kr',history:[{date:'2017-01-23',type:'입사',detail:'재고관리팀 사원'}]},
+{id:'E018',empNo:'20230067',name:'백승호',position:'사원',hq:'물류본부',team:'재고관리팀',joinDate:'2023-03-13',status:'재직',phone:'010-1234-5618',email:'shbaek@hanbit.co.kr',history:[{date:'2023-03-13',type:'입사',detail:'재고관리팀 사원'}]},
+{id:'E019',empNo:'20110017',name:'노형준',position:'부장',hq:'물류본부',team:'생산관리팀',joinDate:'2011-05-02',status:'재직',phone:'010-1234-5619',email:'hjnoh@hanbit.co.kr',history:[{date:'2011-05-02',type:'입사',detail:'생산관리팀 대리'}]},
+{id:'E020',empNo:'20200144',name:'권나은',position:'대리',hq:'물류본부',team:'생산관리팀',joinDate:'2020-08-17',status:'재직',phone:'010-1234-5620',email:'nekwon@hanbit.co.kr',history:[{date:'2020-08-17',type:'입사',detail:'생산관리팀 사원'}]},
+{id:'E021',empNo:'20240088',name:'남궁민',position:'사원',hq:'물류본부',team:'생산관리팀',joinDate:'2024-04-22',status:'재직',phone:'010-1234-5621',email:'mnamgung@hanbit.co.kr',history:[{date:'2024-04-22',type:'입사',detail:'생산관리팀 사원'}]},
+];
+
+const DRAFT_DOCS = [
+{id:'D001',no:'HR-2026-0912',title:'연차 휴가 신청 (9/15)',type:'휴가신청',date:'2026-09-10',status:'승인',content:'개인 사유로 9월 15일 연차를 신청합니다.',drafterLabel:'김도윤 (인사팀 부장)',steps:[{name:'김도윤',role:'기안자',status:'완료'},{name:'최민준',role:'본부장',status:'완료'}]},
+{id:'D002',no:'FN-2026-0908',title:'거래처 미팅 식대 지출결의',type:'지출결의',date:'2026-09-08',status:'진행중',content:'거래처 A사 미팅 관련 식대 320,000원 지출 결의 요청.',drafterLabel:'김도윤 (인사팀 부장)',steps:[{name:'김도윤',role:'기안자',status:'완료'},{name:'최민준',role:'본부장',status:'진행중'},{name:'대표이사',role:'대표이사',status:'대기'}]},
+{id:'D003',no:'PU-2026-0905',title:'사무용품 구매요청',type:'구매요청',date:'2026-09-05',status:'승인',content:'A4용지, 문구류 등 사무용품 구매 요청.',drafterLabel:'김도윤 (인사팀 부장)',steps:[{name:'김도윤',role:'기안자',status:'완료'},{name:'문성민',role:'구매팀장',status:'완료'}]},
+{id:'D004',no:'GA-2026-0830',title:'회의실 예약 규정 개정안',type:'일반품의',date:'2026-08-30',status:'반려',content:'회의실 예약 우선순위 규정 개정 품의.',drafterLabel:'김도윤 (인사팀 부장)',rejectReason:'회의실 예약 우선순위 기준은 총무팀과 사전 협의가 필요합니다. 관련 부서 의견 수렴 후 재상신 바랍니다.',steps:[{name:'김도윤',role:'기안자',status:'완료'},{name:'최민준',role:'본부장',status:'반려'}]},
+{id:'D005',no:'HR-2026-0828',title:'반차 신청 (8/29 오후)',type:'휴가신청',date:'2026-08-28',status:'승인',content:'개인 사유로 8월 29일 오후 반차를 신청합니다.',drafterLabel:'김도윤 (인사팀 부장)',steps:[{name:'김도윤',role:'기안자',status:'완료'},{name:'최민준',role:'본부장',status:'완료'}]},
+{id:'D006',no:'FN-2026-0820',title:'출장비 정산',type:'지출결의',date:'2026-08-20',status:'진행중',content:'부산 출장 교통비/숙박비 정산 결의.',drafterLabel:'김도윤 (인사팀 부장)',steps:[{name:'김도윤',role:'기안자',status:'완료'},{name:'최민준',role:'본부장',status:'진행중'},{name:'대표이사',role:'대표이사',status:'대기'}]},
+{id:'D007',no:'PU-2026-0815',title:'노트북 교체 구매요청',type:'구매요청',date:'2026-08-15',status:'승인',content:'노후 노트북 10대 교체 구매 요청.',drafterLabel:'김도윤 (인사팀 부장)',steps:[{name:'김도윤',role:'기안자',status:'완료'},{name:'문성민',role:'구매팀장',status:'완료'}]},
+{id:'D008',no:'GA-2026-0801',title:'재택근무 신청',type:'일반품의',date:'2026-08-01',status:'승인',content:'주 1회 재택근무 시행 신청.',drafterLabel:'김도윤 (인사팀 부장)',steps:[{name:'김도윤',role:'기안자',status:'완료'},{name:'최민준',role:'본부장',status:'완료'},{name:'대표이사',role:'대표이사',status:'완료'}]},
+];
+
+const APPROVE_DOCS = [
+{id:'A001',no:'HR-2026-0911',title:'연차 신청',type:'휴가신청',date:'2026-09-11',status:'진행중',drafter:'이서연',drafterLabel:'이서연 (인사팀 과장)',content:'개인 사유로 9월 18일 연차를 신청합니다.',steps:[{name:'이서연',role:'기안자',status:'완료'},{name:'김도윤',role:'팀장',status:'진행중'}]},
+{id:'A002',no:'FN-2026-0909',title:'출장비 정산',type:'지출결의',date:'2026-09-09',status:'진행중',drafter:'박지훈',drafterLabel:'박지훈 (인사팀 대리)',content:'서울 출장 교통비 정산 결의.',steps:[{name:'박지훈',role:'기안자',status:'완료'},{name:'김도윤',role:'팀장',status:'진행중'},{name:'최민준',role:'본부장',status:'대기'}]},
+{id:'A003',no:'PU-2026-0907',title:'소모품 구매요청',type:'구매요청',date:'2026-09-07',status:'승인',drafter:'송지안',drafterLabel:'송지안 (구매팀 대리)',content:'문구 세트 등 소모품 구매 요청.',steps:[{name:'송지안',role:'기안자',status:'완료'},{name:'문성민',role:'팀장',status:'완료'},{name:'최민준',role:'본부장',status:'완료'}]},
+{id:'A004',no:'GA-2026-0904',title:'근무시간 변경 신청',type:'일반품의',date:'2026-09-04',status:'진행중',drafter:'정하은',drafterLabel:'정하은 (회계팀 과장)',content:'출퇴근 시간 변경 신청 (탄력근무).',steps:[{name:'정하은',role:'기안자',status:'완료'},{name:'김도윤',role:'팀장',status:'진행중'}]},
+{id:'A005',no:'HR-2026-0902',title:'병가 신청',type:'휴가신청',date:'2026-09-02',status:'대기',drafter:'신아름',drafterLabel:'신아름 (국내영업팀 사원)',content:'개인 건강상의 사유로 병가 신청.',steps:[{name:'신아름',role:'기안자',status:'완료'},{name:'한지호',role:'팀장',status:'대기'}]},
+{id:'A006',no:'FN-2026-0830',title:'접대비 지출결의',type:'지출결의',date:'2026-08-30',status:'진행중',drafter:'오예은',drafterLabel:'오예은 (국내영업팀 과장)',content:'거래처 접대비 지출 결의.',steps:[{name:'오예은',role:'기안자',status:'완료'},{name:'한지호',role:'팀장',status:'진행중'},{name:'최민준',role:'본부장',status:'대기'}]},
+];
+
+const DRAFT_TYPES = ['휴가신청','지출결의','구매요청','일반품의'];
+const DEPT_BUDGET = {
+  '인사팀': 5000000, '회계팀': 6000000, '총무팀': 4000000,
+  '국내영업팀': 8000000, '해외영업팀': 7000000,
+  '구매팀': 9000000, '재고관리팀': 5000000, '생산관리팀': 6000000,
+};
+
+const STATUS_STYLE = {
+  '대기': 'background:#fef3e2;color:#b45309;border:1px solid #fcd9a8',
+  '진행중': 'background:#e8f0fe;color:#1d4ed8;border:1px solid #bfd7fe',
+  '승인': 'background:#e6f6ec;color:#15803d;border:1px solid #bfe8cc',
+  '반려': 'background:#fdeaea;color:#b91c1c;border:1px solid #f6c2c2',
+  '재직': 'background:#e6f6ec;color:#15803d;border:1px solid #bfe8cc',
+  '휴직': 'background:#f1f2f4;color:#6b7280;border:1px solid #dde1e6',
+};
+const STEP_DOT_STYLE = {
+  '완료':'background:#15803d;color:#fff',
+  '진행중':'background:#1d4ed8;color:#fff',
+  '대기':'background:#eef0f3;color:#9aa2ad;border:2px solid #d7dbe0',
+  '반려':'background:#b91c1c;color:#fff',
+};
+const STEP_TAG_STYLE = {
+  '완료':'background:#e6f6ec;color:#15803d',
+  '진행중':'background:#e8f0fe;color:#1d4ed8',
+  '대기':'background:#f1f2f4;color:#9aa2ad',
+  '반려':'background:#fdeaea;color:#b91c1c',
+};
+const STEP_MARK = {'완료':'✓','진행중':'●','대기':'', '반려':'✕'};
+
+const ATT_STYLE = {
+  '정상출근': 'background:#e6f6ec;color:#15803d;border:1px solid #bfe8cc',
+  '지각': 'background:#fef3e2;color:#b45309;border:1px solid #fcd9a8',
+  '조퇴': 'background:#ffedd5;color:#c2410c;border:1px solid #fdba74',
+  '결근': 'background:#fdeaea;color:#b91c1c;border:1px solid #f6c2c2',
+  '휴가': 'background:#e8f0fe;color:#1d4ed8;border:1px solid #bfd7fe',
+};
+const ATT_DOT = {
+  '정상출근': 'background:#15803d', '지각': 'background:#b45309', '조퇴': 'background:#c2410c',
+  '결근': 'background:#b91c1c', '휴가': 'background:#1d4ed8', '주말': 'background:#c7ccd4', '예정': 'background:#e2e5ea',
+};
+const SEPT_START_WEEKDAY = 2; // 2026-09-01 = Tuesday (Sun=0)
+const SEPT_DAYS = 30;
+const TODAY_DAY = 12;
+const ATTENDANCE_MAP = {
+  1:{status:'정상출근',in:'09:02',out:'18:05'},
+  2:{status:'정상출근',in:'08:55',out:'18:10'},
+  3:{status:'지각',in:'09:35',out:'18:00'},
+  4:{status:'정상출근',in:'08:58',out:'18:02'},
+  7:{status:'결근'},
+  8:{status:'조퇴',in:'09:00',out:'15:30'},
+  9:{status:'정상출근',in:'08:50',out:'18:00'},
+  10:{status:'정상출근',in:'09:00',out:'18:15'},
+  11:{status:'정상출근',in:'08:57',out:'18:03'},
+  15:{status:'휴가',doc:'HR-2026-0912'},
+};
+const HQ_BY_TEAM = {
+  '인사팀':'경영지원본부','회계팀':'경영지원본부','총무팀':'경영지원본부',
+  '국내영업팀':'영업본부','해외영업팀':'영업본부',
+  '구매팀':'물류본부','재고관리팀':'물류본부','생산관리팀':'물류본부',
+};
+const EXPENSE_RECORDS = [
+  {no:'FN-2026-0908',title:'거래처 미팅 식대 지출결의',team:'인사팀',amount:320000,status:'진행중',date:'2026-09-08',linked:'D002'},
+  {no:'FN-2026-0820',title:'출장비 정산',team:'인사팀',amount:540000,status:'진행중',date:'2026-08-20',linked:'D006'},
+  {no:'FN-2026-0909',title:'출장비 정산',team:'인사팀',amount:610000,status:'진행중',date:'2026-09-09',linked:'A002'},
+  {no:'FN-2026-0715',title:'하반기 워크숍 경비',team:'인사팀',amount:2800000,status:'승인',date:'2026-07-15',linked:'-'},
+  {no:'FN-2026-0620',title:'채용 박람회 참가비',team:'인사팀',amount:1600000,status:'승인',date:'2026-06-20',linked:'-'},
+  {no:'FN-2026-0512',title:'결산 감사 수수료',team:'회계팀',amount:1200000,status:'승인',date:'2026-05-12',linked:'-'},
+  {no:'FN-2026-0430',title:'사무용품 및 시설 유지보수',team:'총무팀',amount:900000,status:'승인',date:'2026-04-30',linked:'-'},
+  {no:'FN-2026-0830',title:'접대비 지출결의',team:'국내영업팀',amount:750000,status:'진행중',date:'2026-08-30',linked:'A006'},
+  {no:'FN-2026-0610',title:'국내 출장비 정산',team:'국내영업팀',amount:3200000,status:'승인',date:'2026-06-10',linked:'-'},
+  {no:'FN-2026-0525',title:'해외 출장 경비',team:'해외영업팀',amount:5600000,status:'승인',date:'2026-05-25',linked:'-'},
+  {no:'FN-2026-0715B',title:'원자재 협력사 계약금',team:'구매팀',amount:4500000,status:'승인',date:'2026-07-15',linked:'-'},
+  {no:'FN-2026-0601',title:'창고 임차 및 유지비',team:'재고관리팀',amount:3800000,status:'승인',date:'2026-06-01',linked:'-'},
+  {no:'FN-2026-0415',title:'설비 유지보수',team:'생산관리팀',amount:2400000,status:'승인',date:'2026-04-15',linked:'-'},
+];
+const ITEMS = [
+  {id:'I01',name:'A4용지',category:'사무용품',inQty:1200,outQty:1050,stock:150,safety:200,
+    history:[{date:'2026-06-10',type:'입고',qty:'+800',note:'정기 발주'},{date:'2026-07-05',type:'출고',qty:'-500',note:'사내 배포'},{date:'2026-08-20',type:'입고',qty:'+1000',note:'PU-2026-0905 입고완료'},{date:'2026-08-25',type:'출고',qty:'-1150',note:'부서별 배포'}]},
+  {id:'I02',name:'노트북(15형)',category:'전자기기',inQty:40,outQty:38,stock:2,safety:5,
+    history:[{date:'2026-07-01',type:'입고',qty:'+20',note:'정기 발주'},{date:'2026-08-10',type:'출고',qty:'-18',note:'부서 배포'},{date:'2026-09-01',type:'구매요청',qty:'-',note:'PU-2026-0815 상신 (재고 부족)'}]},
+  {id:'I03',name:'문구 세트',category:'사무용품',inQty:300,outQty:250,stock:50,safety:60,
+    history:[{date:'2026-07-20',type:'입고',qty:'+300',note:'정기 발주'},{date:'2026-08-15',type:'출고',qty:'-250',note:'사내 배포'},{date:'2026-09-07',type:'구매요청',qty:'-',note:'PU-2026-0907 상신 (재고 부족)'}]},
+  {id:'I04',name:'볼펜(상자)',category:'사무용품',inQty:500,outQty:420,stock:80,safety:50,history:[{date:'-',type:'입고 누계',qty:'+500',note:'-'},{date:'-',type:'출고 누계',qty:'-420',note:'-'}]},
+  {id:'I05',name:'모니터(24형)',category:'전자기기',inQty:20,outQty:15,stock:5,safety:8,history:[{date:'-',type:'입고 누계',qty:'+20',note:'-'},{date:'-',type:'출고 누계',qty:'-15',note:'-'}]},
+  {id:'I06',name:'포장박스',category:'생산자재',inQty:2000,outQty:1700,stock:300,safety:250,history:[{date:'-',type:'입고 누계',qty:'+2000',note:'-'},{date:'-',type:'출고 누계',qty:'-1700',note:'-'}]},
+  {id:'I07',name:'알루미늄 원자재',category:'생산자재',inQty:500,outQty:480,stock:20,safety:50,history:[{date:'-',type:'입고 누계',qty:'+500',note:'-'},{date:'-',type:'출고 누계',qty:'-480',note:'-'}]},
+  {id:'I08',name:'사무용 의자',category:'사무용품',inQty:30,outQty:22,stock:8,safety:10,history:[{date:'-',type:'입고 누계',qty:'+30',note:'-'},{date:'-',type:'출고 누계',qty:'-22',note:'-'}]},
+  {id:'I09',name:'프린터 토너',category:'사무용품',inQty:60,outQty:55,stock:5,safety:10,history:[{date:'-',type:'입고 누계',qty:'+60',note:'-'},{date:'-',type:'출고 누계',qty:'-55',note:'-'}]},
+  {id:'I10',name:'지게차 부품',category:'생산자재',inQty:15,outQty:9,stock:6,safety:5,history:[{date:'-',type:'입고 누계',qty:'+15',note:'-'},{date:'-',type:'출고 누계',qty:'-9',note:'-'}]},
+];
+const TRACKING_STAGES = ['요청 승인','발주','입고 대기','입고 완료'];
+const PURCHASE_TRACKING = [
+  {no:'PU-2026-0905',title:'사무용품 구매요청',requester:'문성민',team:'구매팀',item:'A4용지',qty:1000,unit:'매',stage:'입고 완료',date:'2026-08-18'},
+  {no:'PU-2026-0815',title:'노트북 교체 구매요청',requester:'문성민',team:'구매팀',item:'노트북(15형)',qty:10,unit:'대',stage:'입고 대기',date:'2026-09-01'},
+  {no:'PU-2026-0907',title:'소모품 구매요청',requester:'송지안',team:'구매팀',item:'문구 세트',qty:300,unit:'세트',stage:'발주',date:'2026-09-07'},
+];
+const CUSTOMERS = [
+  {id:'C01',name:'대한전자유통(주)',contact:'박준혁 이사',phone:'02-1234-5678',lastDeal:'2026-09-05',total:82000000,rep:'한지호',team:'국내영업팀'},
+  {id:'C02',name:'서울전자마트',contact:'이수진 팀장',phone:'02-2345-6789',lastDeal:'2026-08-28',total:45000000,rep:'오예은',team:'국내영업팀'},
+  {id:'C03',name:'부산전기상사',contact:'최영호 대표',phone:'051-345-6789',lastDeal:'2026-08-15',total:31500000,rep:'서준영',team:'국내영업팀'},
+  {id:'C04',name:'대구전자몰',contact:'김하늘 과장',phone:'053-456-7890',lastDeal:'2026-07-30',total:18200000,rep:'신아름',team:'국내영업팀'},
+  {id:'C05',name:'Global Tech Trading',contact:'Michael Tan',phone:'+65-6123-4567',lastDeal:'2026-09-01',total:120000000,rep:'조현우',team:'해외영업팀'},
+  {id:'C06',name:'Osaka Denki Co., Ltd',contact:'Kenji Sato',phone:'+81-6-1234-5678',lastDeal:'2026-08-20',total:76000000,rep:'조현우',team:'해외영업팀'},
+  {id:'C07',name:'Shanghai Electric Import',contact:'Wei Zhang',phone:'+86-21-1234-5678',lastDeal:'2026-08-10',total:54000000,rep:'배수빈',team:'해외영업팀'},
+  {id:'C08',name:'VN Electronics Ltd',contact:'Nguyen Van A',phone:'+84-28-1234-567',lastDeal:'2026-07-22',total:29000000,rep:'배수빈',team:'해외영업팀'},
+];
+const CUSTOMER_HISTORY = {
+  C01:[{date:'2026-09-05',item:'모니터(24형)',qty:'20대',amount:5000000},{date:'2026-07-12',item:'노트북(15형)',qty:'15대',amount:18000000}],
+  C02:[{date:'2026-08-28',item:'문구 세트',qty:'500세트',amount:7500000},{date:'2026-06-02',item:'볼펜(상자)',qty:'300상자',amount:2400000}],
+  C03:[{date:'2026-08-15',item:'A4용지',qty:'2000매',amount:9000000}],
+  C04:[{date:'2026-07-30',item:'포장박스',qty:'1500개',amount:1800000}],
+  C05:[{date:'2026-09-01',item:'노트북(15형)',qty:'40대',amount:48000000},{date:'2026-06-18',item:'모니터(24형)',qty:'60대',amount:15000000}],
+  C06:[{date:'2026-08-20',item:'노트북(15형)',qty:'25대',amount:30000000}],
+  C07:[{date:'2026-08-10',item:'프린터 토너',qty:'200개',amount:13000000}],
+  C08:[{date:'2026-07-22',item:'모니터(24형)',qty:'40대',amount:10000000}],
+};
+const ITEM_PRICE = {
+  'A4용지':4500,'노트북(15형)':1200000,'문구 세트':15000,'볼펜(상자)':8000,'모니터(24형)':250000,
+  '포장박스':1200,'알루미늄 원자재':45000,'사무용 의자':90000,'프린터 토너':65000,'지게차 부품':180000,
+};
+const ITEM_UNIT = {
+  'A4용지':'매','노트북(15형)':'대','문구 세트':'세트','볼펜(상자)':'상자','모니터(24형)':'대',
+  '포장박스':'개','알루미늄 원자재':'kg','사무용 의자':'개','프린터 토너':'개','지게차 부품':'개',
+};
+const SALES_MONTHLY = [
+  {month:'4월',domestic:38000000,overseas:52000000},
+  {month:'5월',domestic:42000000,overseas:61000000},
+  {month:'6월',domestic:45000000,overseas:58000000},
+  {month:'7월',domestic:39000000,overseas:67000000},
+  {month:'8월',domestic:48000000,overseas:73000000},
+  {month:'9월',domestic:31000000,overseas:42000000},
+];
+const LEAVE_TYPES = ['연차','반차','병가'];
+const LEAVE_HISTORY = {
+  E001: [
+    {date:'2026-09-15',type:'연차',status:'승인',doc:'HR-2026-0912'},
+    {date:'2026-08-29',type:'반차',status:'승인',doc:'HR-2026-0828'},
+    {date:'2026-05-04',type:'연차',status:'승인',doc:'HR-2026-0504'},
+    {date:'2026-02-11',type:'병가',status:'승인',doc:'HR-2026-0211'},
+  ],
+};
+
+class Component extends DCLogic {
+  state = {
+    view: 'orgchart',
+    empTab: 'basic',
+    selectedEmpId: 'E001',
+    apTab: 'draft',
+    selectedDocId: null,
+    draftType: '휴가신청',
+    currentUserId: 'E001',
+    amount: '',
+    leaveType: '연차',
+    leaveDate: '2026-09-22',
+    leaveSubmitted: false,
+    balanceEmpId: 'E001',
+    composeOrigin: 'ap',
+    budgetTeam: '인사팀',
+    selectedItemId: 'I01',
+    composeItemId: null,
+    receivedOrders: {},
+    receiveToast: '',
+    selectedCustomerId: 'C01',
+    orderCustomerId: 'C01',
+    orderItemId: null,
+    orderQty: '',
+    orderConfirmed: false,
+    salesDeductions: {},
+    lastOrder: null,
+  };
+
+  setView(v){ this.setState({ view: v }); }
+  selectEmp(id){ this.setState({ view: 'empdetail', selectedEmpId: id, empTab: 'basic' }); }
+  setEmpTab(t){ this.setState({ empTab: t }); }
+  setApTab(t){ this.setState({ apTab: t }); }
+  openDoc(id){ this.setState({ view: 'apdetail', selectedDocId: id }); }
+  setDraftType(t){ this.setState({ draftType: t }); }
+  toggleUser(){ this.setState({ currentUserId: this.state.currentUserId === 'E001' ? 'E015' : 'E001' }); }
+  onAmountChange(e){ this.setState({ amount: e.target.value }); }
+  setLeaveType(t){ this.setState({ leaveType: t }); }
+  onLeaveDateChange(e){ this.setState({ leaveDate: e.target.value }); }
+  submitLeave(){ this.setState({ leaveSubmitted: true }); }
+  selectBalanceEmp(id){ this.setState({ balanceEmpId: id }); }
+  goApComposeFromAp(){ this.setState({ view: 'apcompose', composeOrigin: 'ap' }); }
+  goExpenseCompose(){ this.setState({ view: 'apcompose', draftType: '지출결의', composeOrigin: 'budget' }); }
+  goBudgetDashboard(){ this.setState({ view: 'budget-dashboard' }); }
+  selectBudgetTeam(team){ this.setState({ view: 'budget-detail', budgetTeam: team }); }
+  goInvList(){ this.setState({ view: 'inv-list' }); }
+  goInvTracking(){ this.setState({ view: 'inv-tracking' }); }
+  goPurchaseCompose(){ this.setState({ view: 'apcompose', draftType: '구매요청', composeOrigin: 'inventory' }); }
+  selectItem(id){ this.setState({ view: 'inv-detail', selectedItemId: id }); }
+  selectComposeItem(id){ this.setState({ composeItemId: id }); }
+  receiveOrder(no, itemName, qty){
+    const receivedOrders = { ...this.state.receivedOrders, [no]: true };
+    this.setState({ receivedOrders, receiveToast: '입고 완료 → ' + itemName + ' 재고 +' + qty + ' 반영됨' });
+  }
+  goSalesCustomers(){ this.setState({ view: 'sales-customers' }); }
+  goSalesOrder(){ this.setState({ view: 'sales-order', orderConfirmed: false }); }
+  goSalesDashboard(){ this.setState({ view: 'sales-dashboard' }); }
+  selectCustomer(id){ this.setState({ view: 'sales-customer-detail', selectedCustomerId: id }); }
+  selectOrderCustomer(id){ this.setState({ orderCustomerId: id, orderConfirmed: false }); }
+  selectOrderItem(id){ this.setState({ orderItemId: id, orderQty: '', orderConfirmed: false }); }
+  onOrderQtyChange(e){ this.setState({ orderQty: e.target.value, orderConfirmed: false }); }
+  confirmOrder(){
+    const s = this.state;
+    const item = ITEMS.find(i => i.id === s.orderItemId);
+    if (!item) return;
+    const extra = this.itemExtraStock(item.name);
+    const stock = item.stock + extra - (s.salesDeductions[item.id] || 0);
+    const qty = Number(s.orderQty) || 0;
+    if (qty <= 0 || qty > stock) return;
+    const amount = qty * (ITEM_PRICE[item.name] || 0);
+    const salesDeductions = { ...s.salesDeductions, [item.id]: (s.salesDeductions[item.id] || 0) + qty };
+    this.setState({ salesDeductions, orderConfirmed: true, lastOrder: { item: item.name, qty, unit: ITEM_UNIT[item.name] || '', amount }, orderQty: '' });
+  }
+  itemExtraStock(itemName){
+    const s = this.state;
+    let extra = 0;
+    PURCHASE_TRACKING.forEach(o => { if (s.receivedOrders[o.no] && o.stage === '입고 대기' && o.item === itemName) extra += o.qty; });
+    return extra;
+  }
+
+  leaveBalanceFor(emp, idx) {
+    if (emp.id === 'E001') return { granted: 17, used: 7, remaining: 10 };
+    const joinYear = parseInt(emp.joinDate.slice(0, 4), 10);
+    const years = Math.max(2026 - joinYear, 0);
+    const granted = Math.min(15 + Math.max(years - 1, 0), 25);
+    const used = ((idx * 3 + 4) % Math.max(granted - 2, 1)) + 2;
+    return { granted, used, remaining: granted - used };
+  }
+
+  computeComposeSteps(type, currentUser, amount) {
+    if (type === '휴가신청') return ['팀장'];
+    if (type === '일반품의') return ['팀장','본부장'];
+    if (type === '지출결의') {
+      const steps = ['팀장','본부장'];
+      const budget = DEPT_BUDGET[currentUser.team] || 5000000;
+      const threshold = budget * 0.8;
+      const amt = Number(amount) || 0;
+      const existingUsed = EXPENSE_RECORDS.filter(r => r.team === currentUser.team && r.status === '승인').reduce((a, r) => a + r.amount, 0);
+      if (existingUsed + amt > threshold) steps.push('대표이사');
+      return steps;
+    }
+    if (type === '구매요청') {
+      if (currentUser.hq !== '물류본부') return [];
+      return ['팀장','본부장','대표이사'];
+    }
+    return [];
+  }
+
+  navStyle(active){
+    return active
+      ? { color: '#ffffff', bg: '#2a3648' }
+      : { color: '#aab2bf', bg: 'transparent' };
+  }
+
+  renderVals() {
+    const s = this.state;
+    const emp = EMPLOYEES.find(e => e.id === s.selectedEmpId) || EMPLOYEES[0];
+    const allDocs = [...DRAFT_DOCS, ...APPROVE_DOCS];
+    const rawDoc = allDocs.find(d => d.id === s.selectedDocId);
+    const currentUserRaw = EMPLOYEES.find(e => e.id === s.currentUserId) || EMPLOYEES[0];
+    const currentUser = { ...currentUserRaw, deptLabel: currentUserRaw.hq + ' / ' + currentUserRaw.team, initial: currentUserRaw.name[0] };
+    const otherUserLabel = s.currentUserId === 'E001' ? '문성민 · 구매팀' : '김도윤 · 인사팀';
+
+    const employees = EMPLOYEES.map(e => ({
+      ...e,
+      deptLabel: e.hq + ' / ' + e.team,
+      initial: e.name[0],
+      statusStyle: STATUS_STYLE[e.status] || '',
+      select: () => this.selectEmp(e.id),
+    }));
+
+    const draftDocs = DRAFT_DOCS.map(d => ({ ...d, statusStyle: STATUS_STYLE[d.status] || '', open: () => this.openDoc(d.id) }));
+    const approveDocs = APPROVE_DOCS.map(d => ({ ...d, statusStyle: STATUS_STYLE[d.status] || '', open: () => this.openDoc(d.id) }));
+
+    let doc = null;
+    if (rawDoc) {
+      const steps = rawDoc.steps.map((st, i) => ({
+        ...st,
+        style: STEP_DOT_STYLE[st.status] || '',
+        tagStyle: STEP_TAG_STYLE[st.status] || '',
+        mark: STEP_MARK[st.status] || '',
+        hasArrow: i < rawDoc.steps.length - 1,
+      }));
+      const lastStep = rawDoc.steps[rawDoc.steps.length - 1];
+      doc = {
+        ...rawDoc,
+        statusStyle: STATUS_STYLE[rawDoc.status] || '',
+        drafterLabel: rawDoc.drafterLabel,
+        steps,
+        isRejected: rawDoc.status === '반려',
+        canAct: lastStep.status === '진행중' && rawDoc.steps.some(st => st.name === currentUser.name),
+      };
+    }
+
+    const emp2 = { ...emp, deptLabel: emp.hq + ' / ' + emp.team, initial: emp.name[0], statusStyle: STATUS_STYLE[emp.status] || '' };
+
+    const draftTypeButtons = DRAFT_TYPES.map(t => {
+      const active = t === s.draftType;
+      return {
+        type: t,
+        style: active ? 'background:#2f6fed;color:#fff' : 'background:#f1f2f4;color:#4b5563',
+        select: () => this.setDraftType(t),
+      };
+    });
+    const composeSteps = this.computeComposeSteps(s.draftType, currentUser, s.amount);
+    const composeLine = composeSteps.map(role => ({ role }));
+    const isExpenseType = s.draftType === '지출결의';
+    const isPurchaseBlocked = s.draftType === '구매요청' && currentUser.hq !== '물류본부';
+    const isFormVisible = !isPurchaseBlocked;
+    const budget = DEPT_BUDGET[currentUser.team] || 5000000;
+    const threshold = budget * 0.8;
+    const amt = Number(s.amount) || 0;
+    const existingUsedForCompose = EXPENSE_RECORDS.filter(r => r.team === currentUser.team && r.status === '승인').reduce((a, r) => a + r.amount, 0);
+    const budgetLabel = budget.toLocaleString('ko-KR') + '원';
+    const thresholdLabel = threshold.toLocaleString('ko-KR') + '원';
+    const currentRate = budget > 0 ? Math.round((existingUsedForCompose / budget) * 1000) / 10 : 0;
+    const projectedRate = budget > 0 ? Math.round(((existingUsedForCompose + amt) / budget) * 1000) / 10 : 0;
+    const thresholdNote = (existingUsedForCompose + amt) > threshold
+      ? '현재 소진율 ' + currentRate + '% → 이 건 반영 시 ' + projectedRate + '%' + (projectedRate > 100 ? '(예산 초과)' : '') + ' → 80% 초과, 대표이사 결재 추가'
+      : '현재 소진율 ' + currentRate + '% → 이 건 반영 시 ' + projectedRate + '% → 80% 이하, 본부장 결재로 종료';
+
+    const isOrgChart = s.view === 'orgchart';
+    const isEmpList = s.view === 'emplist';
+    const isEmpDetail = s.view === 'empdetail';
+    const isApList = s.view === 'aplist';
+    const isApCompose = s.view === 'apcompose';
+    const isApDetail = s.view === 'apdetail';
+    const isAttCalendar = s.view === 'att-calendar';
+    const isAttLeave = s.view === 'att-leave';
+    const isAttBalance = s.view === 'att-balance';
+    const isBudgetDashboard = s.view === 'budget-dashboard';
+    const isBudgetDetail = s.view === 'budget-detail';
+    const isInvList = s.view === 'inv-list';
+    const isInvDetail = s.view === 'inv-detail';
+    const isInvTracking = s.view === 'inv-tracking';
+    const isSalesCustomers = s.view === 'sales-customers';
+    const isSalesCustomerDetail = s.view === 'sales-customer-detail';
+    const isSalesOrder = s.view === 'sales-order';
+    const isSalesDashboard = s.view === 'sales-dashboard';
+
+    let breadcrumb = '조직/사원관리 > 조직도';
+    if (isEmpList) breadcrumb = '조직/사원관리 > 사원 목록';
+    if (isEmpDetail) breadcrumb = '조직/사원관리 > 사원 목록 > ' + emp.name;
+    if (isApList) breadcrumb = s.apTab === 'draft' ? '전자결재 > 기안함' : '전자결재 > 결재함';
+    if (isApCompose) breadcrumb = '전자결재 > 기안 작성';
+    if (isApDetail && doc) breadcrumb = '전자결재 > 결재상세 > ' + doc.no;
+    if (isAttCalendar) breadcrumb = '근태관리 > 출퇴근 기록';
+    if (isAttLeave) breadcrumb = '근태관리 > 휴가 신청';
+    if (isAttBalance) breadcrumb = '근태관리 > 연차 잔여현황';
+    if (isApCompose) breadcrumb = s.composeOrigin === 'budget' ? '예산/지출관리 > 지출결의서 작성' : '전자결재 > 기안 작성';
+    if (isBudgetDashboard) breadcrumb = '예산/지출관리 > 예산 현황';
+    if (isBudgetDetail) breadcrumb = '예산/지출관리 > 예산 현황 > ' + s.budgetTeam;
+    if (isInvList) breadcrumb = '재고/구매관리 > 재고 현황';
+    if (isInvDetail) breadcrumb = '재고/구매관리 > 재고 현황 > ' + (ITEMS.find(i => i.id === s.selectedItemId) || ITEMS[0]).name;
+    if (isInvTracking) breadcrumb = '재고/구매관리 > 구매 진행 상태';
+    if (isApCompose && s.composeOrigin === 'inventory') breadcrumb = '재고/구매관리 > 구매요청서 작성';
+    if (isSalesCustomers) breadcrumb = '영업/매출관리 > 거래처 관리';
+    if (isSalesCustomerDetail) breadcrumb = '영업/매출관리 > 거래처 관리 > ' + (CUSTOMERS.find(c => c.id === s.selectedCustomerId) || CUSTOMERS[0]).name;
+    if (isSalesOrder) breadcrumb = '영업/매출관리 > 수주 등록';
+    if (isSalesDashboard) breadcrumb = '영업/매출관리 > 매출 대시보드';
+
+    const orgNav = this.navStyle(isOrgChart);
+    const empNav = this.navStyle(isEmpList || isEmpDetail);
+    const apListNav = this.navStyle(isApList || isApDetail);
+    const apComposeNav = this.navStyle(isApCompose && s.composeOrigin === 'ap');
+    const attCalNav = this.navStyle(isAttCalendar);
+    const attLeaveNav = this.navStyle(isAttLeave);
+    const attBalanceNav = this.navStyle(isAttBalance);
+    const budgetDashNav = this.navStyle(isBudgetDashboard || isBudgetDetail);
+    const budgetComposeNav = this.navStyle(isApCompose && s.composeOrigin === 'budget');
+    const invListNav = this.navStyle(isInvList || isInvDetail);
+    const invTrackNav = this.navStyle(isInvTracking);
+    const purchaseComposeNav = this.navStyle(isApCompose && s.composeOrigin === 'inventory');
+    const salesCustNav = this.navStyle(isSalesCustomers || isSalesCustomerDetail);
+    const salesOrderNav = this.navStyle(isSalesOrder);
+    const salesDashNav = this.navStyle(isSalesDashboard);
+    const composeTitle = s.composeOrigin === 'budget' ? '지출결의서 작성' : (s.composeOrigin === 'inventory' ? '구매요청서 작성' : '기안 작성');
+
+    // --- 출퇴근 기록 캘린더 ---
+    const weekdayLabels = ['일','월','화','수','목','금','토'].map(label => ({ label }));
+    const calendarCells = [];
+    for (let i = 0; i < SEPT_START_WEEKDAY; i++) calendarCells.push({ hasDay: false, style: 'background:#fafbfc' });
+    for (let day = 1; day <= SEPT_DAYS; day++) {
+      const weekday = (SEPT_START_WEEKDAY + (day - 1)) % 7;
+      const isWeekend = weekday === 0 || weekday === 6;
+      const rec = ATTENDANCE_MAP[day];
+      let status = null;
+      if (rec) status = rec.status;
+      else if (isWeekend) status = '주말';
+      else if (day > TODAY_DAY) status = '예정';
+      const isToday = day === TODAY_DAY;
+      const hasStatus = !!status && status !== '주말' && status !== '예정';
+      calendarCells.push({
+        hasDay: true,
+        day,
+        isToday,
+        dayColor: isWeekend ? 'color:#c7ccd4' : 'color:#1a1d23',
+        style: isToday ? 'background:#ffffff;border:2px solid #2f6fed' : 'background:#ffffff;border:1px solid #eef0f3',
+        hasStatus,
+        statusLabel: status,
+        badgeStyle: hasStatus ? (ATT_STYLE[status] || '') : '',
+        hasTime: !!(rec && rec.in),
+        timeLabel: rec && rec.in ? rec.in + '~' + rec.out : '',
+        hasDoc: !!(rec && rec.doc),
+        doc: rec && rec.doc ? rec.doc : '',
+      });
+    }
+    while (calendarCells.length < 42) calendarCells.push({ hasDay: false, style: 'background:#fafbfc' });
+
+    const attSummary = { normal: 0, late: 0, early: 0, absent: 0, leave: 0 };
+    Object.keys(ATTENDANCE_MAP).forEach(k => {
+      const day = Number(k);
+      const st = ATTENDANCE_MAP[k].status;
+      if (day <= TODAY_DAY) {
+        if (st === '정상출근') attSummary.normal++;
+        if (st === '지각') attSummary.late++;
+        if (st === '조퇴') attSummary.early++;
+        if (st === '결근') attSummary.absent++;
+      }
+      if (st === '휴가') attSummary.leave++;
+    });
+
+    const attLegend = ['정상출근','지각','조퇴','결근','휴가','주말'].map(label => ({ label, dotStyle: ATT_DOT[label] || '' }));
+
+    // --- 휴가 신청 ---
+    const leaveTypeButtons = LEAVE_TYPES.map(t => ({
+      type: t,
+      style: t === s.leaveType ? 'background:#2f6fed;color:#fff' : 'background:#f1f2f4;color:#4b5563',
+      select: () => this.setLeaveType(t),
+    }));
+    const isAnnualLeave = s.leaveType === '연차';
+    const currentBalance = this.leaveBalanceFor(currentUser, 0);
+    const leaveBalanceLabel = currentBalance.remaining + '일 (발생 ' + currentBalance.granted + '일 · 사용 ' + currentBalance.used + '일)';
+
+    // --- 연차 잔여현황 ---
+    const leaveBalanceRows = EMPLOYEES.map((e, idx) => {
+      const bal = this.leaveBalanceFor(e, idx);
+      return {
+        ...bal,
+        name: e.name, position: e.position, deptLabel: e.hq + ' / ' + e.team,
+        rowStyle: e.id === s.balanceEmpId ? 'background:#f0f5ff' : '',
+        select: () => this.selectBalanceEmp(e.id),
+      };
+    });
+    const balanceEmpRaw = EMPLOYEES.find(e => e.id === s.balanceEmpId) || EMPLOYEES[0];
+    const balanceEmp = { ...balanceEmpRaw };
+    const rawHistory = LEAVE_HISTORY[s.balanceEmpId] || [];
+    const balanceEmpHistory = rawHistory.map(h => ({ ...h, statusStyle: STATUS_STYLE[h.status] || '' }));
+    const hasLeaveHistory = rawHistory.length > 0;
+
+    // --- 예산/지출관리 ---
+    const rateStyleFor = (rate) => {
+      if (rate >= 90) return { badge: 'background:#fdeaea;color:#b91c1c', bar: 'background:#b91c1c' };
+      if (rate >= 80) return { badge: 'background:#ffedd5;color:#c2410c', bar: 'background:#c2410c' };
+      return { badge: 'background:#e6f6ec;color:#15803d', bar: 'background:#15803d' };
+    };
+    const budgetRows = Object.keys(DEPT_BUDGET).map(team => {
+      const budget = DEPT_BUDGET[team];
+      const used = EXPENSE_RECORDS.filter(r => r.team === team && r.status === '승인').reduce((a, r) => a + r.amount, 0);
+      const remaining = budget - used;
+      const rate = Math.round((used / budget) * 1000) / 10;
+      const st = rateStyleFor(rate);
+      return {
+        team, hq: HQ_BY_TEAM[team], pct: Math.min(rate, 100),
+        budgetLabel: budget.toLocaleString('ko-KR') + '원',
+        usedLabel: used.toLocaleString('ko-KR') + '원',
+        remainingLabel: remaining.toLocaleString('ko-KR') + '원',
+        rateLabel: rate + '%',
+        badgeStyle: st.badge, barStyle: st.bar,
+        rowStyle: team === s.budgetTeam && isBudgetDetail ? 'background:#f0f5ff' : '',
+        select: () => this.selectBudgetTeam(team),
+      };
+    });
+    const bdTeam = s.budgetTeam;
+    const bdBudget = DEPT_BUDGET[bdTeam] || 0;
+    const bdRecords = EXPENSE_RECORDS.filter(r => r.team === bdTeam).map(r => ({
+      ...r, amountLabel: r.amount.toLocaleString('ko-KR') + '원', statusStyle: STATUS_STYLE[r.status] || '',
+    }));
+    const bdUsed = EXPENSE_RECORDS.filter(r => r.team === bdTeam && r.status === '승인').reduce((a, r) => a + r.amount, 0);
+    const bdRate = bdBudget > 0 ? Math.round((bdUsed / bdBudget) * 1000) / 10 : 0;
+    const budgetDetail = {
+      team: bdTeam, hq: HQ_BY_TEAM[bdTeam],
+      budgetLabel: bdBudget.toLocaleString('ko-KR') + '원',
+      usedLabel: bdUsed.toLocaleString('ko-KR') + '원',
+      usedColor: bdRate >= 80 ? 'color:#c2410c' : 'color:#1a1d23',
+      remainingLabel: (bdBudget - bdUsed).toLocaleString('ko-KR') + '원',
+      records: bdRecords,
+    };
+
+    // --- 재고/구매관리 ---
+    const invBadge = (low) => low ? { bg: 'background:#fdeaea;color:#b91c1c', label: '안전재고 이하' } : { bg: 'background:#e6f6ec;color:#15803d', label: '정상' };
+    const extraStockByItem = {};
+    const receivedNoteByItem = {};
+    PURCHASE_TRACKING.forEach(o => {
+      if (s.receivedOrders[o.no] && o.stage === '입고 대기') {
+        extraStockByItem[o.item] = (extraStockByItem[o.item] || 0) + o.qty;
+        receivedNoteByItem[o.item] = o.no;
+      }
+    });
+    const items = ITEMS.map(it => {
+      const stock = it.stock + (extraStockByItem[it.name] || 0);
+      const low = stock <= it.safety;
+      const b = invBadge(low);
+      return { ...it, stock, stockColor: low ? 'color:#b91c1c' : '', badgeStyle: b.bg, badgeLabel: b.label, select: () => this.selectItem(it.id) };
+    });
+    const invItemRaw = ITEMS.find(i => i.id === s.selectedItemId) || ITEMS[0];
+    const invExtra = extraStockByItem[invItemRaw.name] || 0;
+    const invStock = invItemRaw.stock + invExtra;
+    const invLow = invStock <= invItemRaw.safety;
+    const invBadgeInfo = invBadge(invLow);
+    const invHistory = invExtra > 0
+      ? [...invItemRaw.history, { date: '2026-09-12', type: '입고', qty: '+' + invExtra, note: receivedNoteByItem[invItemRaw.name] + ' 입고완료' }]
+      : invItemRaw.history;
+    const invItem = { ...invItemRaw, stock: invStock, history: invHistory, badgeStyle: invBadgeInfo.bg, badgeLabel: invBadgeInfo.label };
+
+    const purchaseItemButtons = ITEMS.map(it => ({
+      id: it.id, name: it.name,
+      style: it.id === s.composeItemId ? 'background:#2f6fed;color:#fff' : 'background:#f1f2f4;color:#4b5563',
+      select: () => this.selectComposeItem(it.id),
+    }));
+    const composeSelectedItemRaw = ITEMS.find(i => i.id === s.composeItemId);
+    const hasSelectedItem = !!composeSelectedItemRaw;
+    let selectedItem = null, selectedItemNoteStyle = '';
+    if (composeSelectedItemRaw) {
+      const low = composeSelectedItemRaw.stock <= composeSelectedItemRaw.safety;
+      selectedItem = { name: composeSelectedItemRaw.name, stock: composeSelectedItemRaw.stock, safety: composeSelectedItemRaw.safety, isLow: low };
+      selectedItemNoteStyle = low ? 'background:#fdeaea;color:#b91c1c;border:1px solid #f6c2c2' : 'background:#f7f8fa;color:#4b5563';
+    }
+    const isPurchaseType = s.draftType === '구매요청';
+
+    const trackingOrders = PURCHASE_TRACKING.map(o => {
+      const received = !!s.receivedOrders[o.no];
+      const effectiveStage = received ? '입고 완료' : o.stage;
+      const stageIdx = TRACKING_STAGES.indexOf(effectiveStage);
+      const steps = TRACKING_STAGES.map((label, i) => {
+        let st;
+        if (i < stageIdx) st = '완료'; else if (i === stageIdx) st = '완료'; else st = '대기';
+        return {
+          label, hasArrow: i < TRACKING_STAGES.length - 1,
+          style: st === '완료' ? 'background:#15803d;color:#fff' : 'background:#eef0f3;color:#9aa2ad;border:2px solid #d7dbe0',
+          labelColor: i <= stageIdx ? 'color:#1a1d23' : 'color:#9aa2ad',
+          mark: st === '완료' ? '✓' : '',
+        };
+      });
+      return {
+        ...o, steps,
+        canReceive: effectiveStage === '입고 대기' && !received,
+        justReceived: received && o.stage === '입고 대기',
+        receive: () => this.receiveOrder(o.no, o.item, o.qty),
+      };
+    });
+
+    // --- 영업/매출관리 ---
+    const customers = CUSTOMERS.map(c => ({ ...c, totalLabel: c.total.toLocaleString('ko-KR') + '원', select: () => this.selectCustomer(c.id) }));
+    const custRaw = CUSTOMERS.find(c => c.id === s.selectedCustomerId) || CUSTOMERS[0];
+    const custDetail = {
+      ...custRaw, totalLabel: custRaw.total.toLocaleString('ko-KR') + '원',
+      history: (CUSTOMER_HISTORY[custRaw.id] || []).map(h => ({ ...h, amountLabel: h.amount.toLocaleString('ko-KR') + '원' })),
+    };
+    const customerButtons = CUSTOMERS.map(c => ({
+      name: c.name,
+      style: c.id === s.orderCustomerId ? 'background:#2f6fed;color:#fff' : 'background:#f1f2f4;color:#4b5563',
+      select: () => this.selectOrderCustomer(c.id),
+    }));
+    const orderItemButtons = ITEMS.map(it => ({
+      name: it.name,
+      style: it.id === s.orderItemId ? 'background:#2f6fed;color:#fff' : 'background:#f1f2f4;color:#4b5563',
+      select: () => this.selectOrderItem(it.id),
+    }));
+    const orderItemRaw = ITEMS.find(i => i.id === s.orderItemId);
+    const hasOrderItem = !!orderItemRaw;
+    let orderItem = null, orderStockNoteStyle = '', isStockShort = false, canConfirmOrder = false, orderPreviewAmountLabel = '';
+    if (orderItemRaw) {
+      const extra = this.itemExtraStock(orderItemRaw.name);
+      const stock = orderItemRaw.stock + extra - (s.salesDeductions[orderItemRaw.id] || 0);
+      const unit = ITEM_UNIT[orderItemRaw.name] || '';
+      const price = ITEM_PRICE[orderItemRaw.name] || 0;
+      orderItem = { name: orderItemRaw.name, stock, unit, priceLabel: price.toLocaleString('ko-KR') + '원' };
+      const qty = Number(s.orderQty) || 0;
+      const low = stock <= orderItemRaw.safety;
+      orderStockNoteStyle = low ? 'background:#fdeaea;color:#b91c1c;border:1px solid #f6c2c2' : 'background:#f7f8fa;color:#4b5563';
+      isStockShort = qty > 0 && qty > stock;
+      canConfirmOrder = qty > 0 && qty <= stock;
+      if (canConfirmOrder) orderPreviewAmountLabel = (qty * price).toLocaleString('ko-KR') + '원';
+    }
+    const confirmButtonStyle = canConfirmOrder ? 'background:#2f6fed;color:#fff;cursor:pointer' : 'background:#eef0f3;color:#c7ccd4;cursor:not-allowed';
+    const lastOrderItem = s.lastOrder ? s.lastOrder.item : '';
+    const lastOrderQty = s.lastOrder ? s.lastOrder.qty : '';
+    const lastOrderAmountLabel = s.lastOrder ? s.lastOrder.amount.toLocaleString('ko-KR') + '원' : '';
+
+    const maxMonthly = Math.max(...SALES_MONTHLY.map(m => Math.max(m.domestic, m.overseas)));
+    const salesMonthly = SALES_MONTHLY.map(m => ({
+      month: m.month,
+      domesticH: Math.round((m.domestic / maxMonthly) * 150),
+      overseasH: Math.round((m.overseas / maxMonthly) * 150),
+    }));
+    const domesticTotal = SALES_MONTHLY.reduce((a, m) => a + m.domestic, 0);
+    const overseasTotal = SALES_MONTHLY.reduce((a, m) => a + m.overseas, 0);
+    const salesSummary = {
+      domesticTotalLabel: domesticTotal.toLocaleString('ko-KR') + '원', domesticCount: 47,
+      overseasTotalLabel: overseasTotal.toLocaleString('ko-KR') + '원', overseasCount: 33,
+    };
+
+    const basicActive = s.empTab === 'basic';
+
+    return {
+      breadcrumb,
+      isOrgChart, isEmpList, isEmpDetail, isApList, isApCompose, isApDetail,
+      empCount: EMPLOYEES.length,
+      employees,
+      emp: emp2,
+      draftDocs, approveDocs,
+      doc,
+      isTabBasic: basicActive,
+      isTabHistory: !basicActive,
+      basicTabColor: basicActive ? '#1a1d23' : '#9aa2ad',
+      basicTabBorder: basicActive ? '#2f6fed' : 'transparent',
+      historyTabColor: !basicActive ? '#1a1d23' : '#9aa2ad',
+      historyTabBorder: !basicActive ? '#2f6fed' : 'transparent',
+      tabBasicClick: () => this.setEmpTab('basic'),
+      tabHistoryClick: () => this.setEmpTab('history'),
+      isApTabDraft: s.apTab === 'draft',
+      isApTabApprove: s.apTab === 'approve',
+      draftTabColor: s.apTab === 'draft' ? '#1a1d23' : '#9aa2ad',
+      draftTabBorder: s.apTab === 'draft' ? '#2f6fed' : 'transparent',
+      approveTabColor: s.apTab === 'approve' ? '#1a1d23' : '#9aa2ad',
+      approveTabBorder: s.apTab === 'approve' ? '#2f6fed' : 'transparent',
+      tabDraftClick: () => this.setApTab('draft'),
+      tabApproveClick: () => this.setApTab('approve'),
+      draftTypeButtons, composeLine,
+      composeStepCount: composeSteps.length + 1,
+      isExpenseType, isPurchaseBlocked, isFormVisible,
+      amountValue: s.amount, budgetLabel, thresholdLabel, thresholdNote,
+      currentUser, otherUserLabel,
+      toggleUser: () => this.toggleUser(),
+      onAmountChange: (e) => this.onAmountChange(e),
+      goOrgChart: () => this.setView('orgchart'),
+      goEmpList: () => this.setView('emplist'),
+      goApList: () => this.setView('aplist'),
+      goApCompose: () => this.setState({ view: 'apcompose', composeOrigin: 'ap' }),
+      orgChartNavColor: orgNav.color, orgChartNavBg: orgNav.bg,
+      empListNavColor: empNav.color, empListNavBg: empNav.bg,
+      apListNavColor: apListNav.color, apListNavBg: apListNav.bg,
+      apComposeNavColor: apComposeNav.color, apComposeNavBg: apComposeNav.bg,
+
+      isAttCalendar, isAttLeave, isAttBalance,
+      goAttCalendar: () => this.setView('att-calendar'),
+      goAttLeave: () => this.setView('att-leave'),
+      goAttBalance: () => this.setView('att-balance'),
+      attCalNavColor: attCalNav.color, attCalNavBg: attCalNav.bg,
+      attLeaveNavColor: attLeaveNav.color, attLeaveNavBg: attLeaveNav.bg,
+      attBalanceNavColor: attBalanceNav.color, attBalanceNavBg: attBalanceNav.bg,
+      weekdayLabels, calendarCells, attSummary, attLegend,
+      leaveTypeButtons, isAnnualLeave, leaveBalanceLabel,
+      leaveDate: s.leaveDate, onLeaveDateChange: (e) => this.onLeaveDateChange(e),
+      leaveSubmitted: s.leaveSubmitted, submitLeave: () => this.submitLeave(),
+      leaveBalanceRows, balanceEmp, balanceEmpHistory, hasLeaveHistory, hasNoLeaveHistory: !hasLeaveHistory,
+
+      isBudgetDashboard, isBudgetDetail, composeTitle,
+      goBudgetDashboard: () => this.goBudgetDashboard(),
+      goExpenseCompose: () => this.goExpenseCompose(),
+      budgetDashNavColor: budgetDashNav.color, budgetDashNavBg: budgetDashNav.bg,
+      budgetComposeNavColor: budgetComposeNav.color, budgetComposeNavBg: budgetComposeNav.bg,
+      budgetRows, budgetDetail,
+
+      isInvList, isInvDetail, isInvTracking, isPurchaseType,
+      goInvList: () => this.goInvList(),
+      goInvTracking: () => this.goInvTracking(),
+      goPurchaseCompose: () => this.goPurchaseCompose(),
+      invListNavColor: invListNav.color, invListNavBg: invListNav.bg,
+      invTrackNavColor: invTrackNav.color, invTrackNavBg: invTrackNav.bg,
+      purchaseComposeNavColor: purchaseComposeNav.color, purchaseComposeNavBg: purchaseComposeNav.bg,
+      items, invItem, purchaseItemButtons, hasSelectedItem, selectedItem, selectedItemNoteStyle,
+      trackingOrders, receiveToast: s.receiveToast,
+
+      isSalesCustomers, isSalesCustomerDetail, isSalesOrder, isSalesDashboard,
+      goSalesCustomers: () => this.goSalesCustomers(),
+      goSalesOrder: () => this.goSalesOrder(),
+      goSalesDashboard: () => this.goSalesDashboard(),
+      salesCustNavColor: salesCustNav.color, salesCustNavBg: salesCustNav.bg,
+      salesOrderNavColor: salesOrderNav.color, salesOrderNavBg: salesOrderNav.bg,
+      salesDashNavColor: salesDashNav.color, salesDashNavBg: salesDashNav.bg,
+      customers, custDetail, customerButtons, orderItemButtons,
+      hasOrderItem, orderItem, orderStockNoteStyle, isStockShort, canConfirmOrder, orderPreviewAmountLabel,
+      confirmButtonStyle, orderQty: s.orderQty, onOrderQtyChange: (e) => this.onOrderQtyChange(e),
+      confirmOrder: () => this.confirmOrder(), orderConfirmed: s.orderConfirmed,
+      lastOrderItem, lastOrderQty, lastOrderAmountLabel,
+      salesMonthly, salesSummary,
+    };
+  }
+}
+
+</script>
+</body>
+</html>

@@ -4,7 +4,14 @@
 <div class="card">
     <h2>[${detail.document.documentType.label}] ${detail.document.title}</h2>
     <p>기안자: ${detail.document.drafterName} / 기안일: ${detail.document.createdAt}</p>
-    <p>상태: <strong>${detail.status.label}</strong></p>
+    <p>상태:
+        <c:choose>
+            <c:when test="${detail.status == 'APPROVED'}"><span class="badge badge-success">${detail.status.label}</span></c:when>
+            <c:when test="${detail.status == 'REJECTED'}"><span class="badge badge-danger">${detail.status.label}</span></c:when>
+            <c:when test="${detail.status == 'IN_PROGRESS'}"><span class="badge badge-primary">${detail.status.label}</span></c:when>
+            <c:otherwise><span class="badge badge-neutral">${detail.status.label}</span></c:otherwise>
+        </c:choose>
+    </p>
     <c:if test="${not empty detail.document.content}"><p>내용: ${detail.document.content}</p></c:if>
     <c:if test="${not empty detail.document.amount}"><p>금액: ${detail.document.amount}원</p></c:if>
     <c:if test="${not empty detail.document.startDate}"><p>기간: ${detail.document.startDate} ~ ${detail.document.endDate}</p></c:if>
@@ -20,7 +27,13 @@
                 <td>${step.stepOrder}</td>
                 <td>${step.approverLevel}</td>
                 <td>${step.approverName}</td>
-                <td>${empty step.actionResult ? '대기' : step.actionResult}</td>
+                <td>
+                    <c:choose>
+                        <c:when test="${step.actionResult == 'APPROVE'}"><span class="badge badge-success">승인</span></c:when>
+                        <c:when test="${step.actionResult == 'REJECT'}"><span class="badge badge-danger">반려</span></c:when>
+                        <c:otherwise><span class="badge badge-neutral">대기</span></c:otherwise>
+                    </c:choose>
+                </td>
                 <td>${step.actionComment}</td>
             </tr>
         </c:forEach>

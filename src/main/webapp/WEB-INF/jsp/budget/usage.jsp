@@ -19,7 +19,7 @@
                 <td><fmt:formatNumber value="${u.used}" type="number"/></td>
                 <td><fmt:formatNumber value="${u.remaining}" type="number"/></td>
                 <td><fmt:formatNumber value="${u.usageRate}" type="percent" maxFractionDigits="1"/></td>
-                <td><c:if test="${u.warning}"><span style="color:#c0392b;">80% 경고</span></c:if></td>
+                <td><c:if test="${u.warning}"><span class="badge badge-warning">80% 경고</span></c:if></td>
             </tr>
         </c:forEach>
         <c:if test="${empty usages}">

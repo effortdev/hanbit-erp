@@ -18,10 +18,10 @@
                 <td>${req.amount}</td>
                 <td>
                     <c:choose>
-                        <c:when test="${req.status == 'PENDING'}">상신 (결재 진행중)</c:when>
-                        <c:when test="${req.status == 'CONFIRMED'}">구매확정 (입고대기)</c:when>
-                        <c:when test="${req.status == 'RECEIVED'}">입고완료</c:when>
-                        <c:when test="${req.status == 'REJECTED'}">반려</c:when>
+                        <c:when test="${req.status == 'PENDING'}"><span class="badge badge-neutral">상신 (결재 진행중)</span></c:when>
+                        <c:when test="${req.status == 'CONFIRMED'}"><span class="badge badge-primary">구매확정 (입고대기)</span></c:when>
+                        <c:when test="${req.status == 'RECEIVED'}"><span class="badge badge-success">입고완료</span></c:when>
+                        <c:when test="${req.status == 'REJECTED'}"><span class="badge badge-danger">반려</span></c:when>
                     </c:choose>
                 </td>
                 <td><a href="${pageContext.request.contextPath}/approval/${req.approvalDocumentId}">문서 보기</a></td>

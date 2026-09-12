@@ -3,7 +3,7 @@
 
 <div class="card">
     <h2>수주 등록</h2>
-    <p style="font-size:13px;color:#555;">가용 재고보다 많은 수량은 등록할 수 없습니다.</p>
+    <p>가용 재고보다 많은 수량은 등록할 수 없습니다.</p>
     <form method="post" action="${pageContext.request.contextPath}/sales/orders">
         <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
         <label>거래처</label>

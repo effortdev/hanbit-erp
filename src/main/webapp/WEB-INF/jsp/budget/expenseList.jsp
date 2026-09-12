@@ -16,7 +16,13 @@
                 <td>${req.accountCategory.label}</td>
                 <td>${req.amount}</td>
                 <td>${req.reason}</td>
-                <td>${req.status}</td>
+                <td>
+                    <c:choose>
+                        <c:when test="${req.status == 'APPROVED'}"><span class="badge badge-success">승인</span></c:when>
+                        <c:when test="${req.status == 'REJECTED'}"><span class="badge badge-danger">반려</span></c:when>
+                        <c:otherwise><span class="badge badge-neutral">대기</span></c:otherwise>
+                    </c:choose>
+                </td>
                 <td><a href="${pageContext.request.contextPath}/approval/${req.approvalDocumentId}">문서 보기</a></td>
             </tr>
         </c:forEach>

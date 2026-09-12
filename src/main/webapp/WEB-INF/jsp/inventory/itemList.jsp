@@ -19,7 +19,7 @@
                 <td>${item.safetyStock}</td>
                 <td>
                     <c:if test="${item.belowSafetyStock}">
-                        <span style="color:#c0392b;">⚠ 안전재고 이하</span>
+                        <span class="badge badge-danger">⚠ 안전재고 이하</span>
                     </c:if>
                 </td>
                 <td>

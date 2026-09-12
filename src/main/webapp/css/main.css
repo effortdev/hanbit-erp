@@ -1,0 +1,370 @@
+/*
+ * 한빛전자 ERP 공통 디자인 시스템.
+ * docs/design-reference/한빛전자 ERP 와이어프레임.dc.html 의 색상/폰트/여백/모서리 수치를
+ * 참고해 JSP+CSS로 새로 작성한 것으로, 그 파일 자체를 복사하거나 실행하지 않는다.
+ */
+
+:root {
+  --color-bg: #f4f5f7;
+  --color-surface: #ffffff;
+  --color-text: #1a1d23;
+  --color-text-secondary: #6b7280;
+  --color-text-muted: #9aa2ad;
+  --color-border: #e2e5ea;
+  --color-border-strong: #d7dbe0;
+
+  --color-primary: #2f6fed;
+  --color-primary-dark: #1d4ed8;
+  --color-primary-light: #5b8def;
+  --color-primary-tint: #e8f0fe;
+  --color-primary-tint-strong: #bfd7fe;
+
+  --color-danger: #b91c1c;
+  --color-danger-tint: #fdeaea;
+  --color-danger-tint-strong: #f6c2c2;
+
+  --color-success: #15803d;
+  --color-success-dark: #2f6f4a;
+  --color-success-tint: #e6f6ec;
+  --color-success-tint-strong: #bfe8cc;
+
+  --color-warning: #b45309;
+  --color-warning-alt: #c2410c;
+  --color-warning-tint: #fef3e2;
+
+  --sidebar-bg: #1c2531;
+  --sidebar-border: #2a3648;
+  --sidebar-text: #e7ebf1;
+  --sidebar-text-muted: #8b95a5;
+  --sidebar-active-dot: #5b8def;
+
+  --radius-lg: 10px;
+  --radius-md: 7px;
+  --radius-sm: 6px;
+  --radius-xs: 2px;
+
+  --sidebar-width: 236px;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html, body {
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: 'Noto Sans KR', -apple-system, BlinkMacSystemFont, 'Malgun Gothic', sans-serif;
+  font-size: 12.5px;
+  background: var(--color-bg);
+  color: var(--color-text);
+  line-height: 1.5;
+}
+
+a {
+  color: var(--color-primary);
+  text-decoration: none;
+}
+
+a:hover {
+  color: var(--color-primary-dark);
+  text-decoration: none;
+}
+
+/* ===== 레이아웃: 좌측 사이드바 + 컨텐츠 ===== */
+
+.app-shell {
+  display: flex;
+  min-height: 100vh;
+}
+
+.sidebar {
+  width: var(--sidebar-width);
+  flex: 0 0 var(--sidebar-width);
+  background: var(--sidebar-bg);
+  color: var(--sidebar-text);
+  position: fixed;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+}
+
+.sidebar-brand {
+  padding: 22px 20px 18px;
+  border-bottom: 1px solid var(--sidebar-border);
+}
+
+.sidebar-brand .brand-title {
+  color: #ffffff;
+  font-weight: 700;
+  font-size: 15px;
+}
+
+.sidebar-brand .brand-subtitle {
+  color: var(--sidebar-text-muted);
+  font-size: 11px;
+  margin-top: 4px;
+}
+
+.sidebar-nav {
+  flex: 1;
+  padding: 6px 0;
+}
+
+.nav-group {
+  padding: 10px 0;
+  border-bottom: 1px solid var(--sidebar-border);
+}
+
+.nav-group:last-child {
+  border-bottom: none;
+}
+
+.nav-group-title {
+  color: var(--sidebar-text-muted);
+  font-size: 11px;
+  font-weight: 500;
+  padding: 6px 20px;
+}
+
+.nav-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 7px 20px 7px 30px;
+  color: var(--sidebar-text);
+  font-size: 12.5px;
+}
+
+.nav-item:hover {
+  background: rgba(255, 255, 255, 0.05);
+  color: #ffffff;
+}
+
+.nav-item::before {
+  content: '';
+  width: 5px;
+  height: 5px;
+  flex: 0 0 5px;
+  border-radius: 50%;
+  background: transparent;
+}
+
+.nav-item.active {
+  background: rgba(91, 141, 239, 0.16);
+  color: #ffffff;
+  font-weight: 500;
+}
+
+.nav-item.active::before {
+  background: var(--sidebar-active-dot);
+}
+
+.sidebar-user {
+  padding: 14px 20px;
+  border-top: 1px solid var(--sidebar-border);
+  font-size: 11.5px;
+}
+
+.sidebar-user .user-name {
+  color: var(--sidebar-text);
+  margin-bottom: 2px;
+}
+
+.sidebar-user .user-position {
+  color: var(--sidebar-text-muted);
+  margin-bottom: 8px;
+}
+
+.sidebar-user .user-logout {
+  color: var(--sidebar-text-muted);
+  font-size: 11px;
+}
+
+.sidebar-user .user-logout:hover {
+  color: #ffffff;
+}
+
+.content {
+  margin-left: var(--sidebar-width);
+  flex: 1;
+  padding: 28px 32px 60px;
+  max-width: 1120px;
+}
+
+/* ===== 공통 컴포넌트 ===== */
+
+.page-actions {
+  margin: -6px 0 20px;
+  display: flex;
+  gap: 16px;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+.page-actions a {
+  font-weight: 500;
+  font-size: 12.5px;
+}
+
+.card {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  padding: 20px 22px;
+  margin-bottom: 18px;
+  box-shadow: 0 1px 2px rgba(16, 24, 40, 0.04);
+}
+
+.card h2 {
+  font-size: 17px;
+  font-weight: 700;
+  margin: 0 0 4px;
+  color: var(--color-text);
+}
+
+.card h3 {
+  font-size: 13.5px;
+  font-weight: 700;
+  margin: 0 0 12px;
+  color: var(--color-text);
+}
+
+.card p {
+  color: var(--color-text-secondary);
+  font-size: 12px;
+  margin: 6px 0;
+}
+
+table {
+  border-collapse: collapse;
+  width: 100%;
+}
+
+th, td {
+  border-bottom: 1px solid var(--color-border);
+  padding: 10px 12px;
+  text-align: left;
+  font-size: 12.5px;
+}
+
+th {
+  background: #f7f8fa;
+  color: var(--color-text-secondary);
+  font-weight: 500;
+  font-size: 11.5px;
+}
+
+tbody tr:hover {
+  background: #fafbfc;
+}
+
+tbody tr:last-child td {
+  border-bottom: none;
+}
+
+form.inline {
+  display: inline;
+}
+
+label {
+  display: block;
+  margin: 12px 0 5px;
+  font-size: 11.5px;
+  font-weight: 500;
+  color: var(--color-text-secondary);
+}
+
+input, select {
+  padding: 8px 10px;
+  width: 280px;
+  max-width: 100%;
+  border: 1px solid var(--color-border-strong);
+  border-radius: var(--radius-sm);
+  font-family: inherit;
+  font-size: 12.5px;
+  color: var(--color-text);
+  background: var(--color-surface);
+}
+
+input:focus, select:focus {
+  outline: none;
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 3px var(--color-primary-tint);
+}
+
+button {
+  display: inline-block;
+  padding: 8px 16px;
+  margin-top: 14px;
+  background: var(--color-primary);
+  color: #ffffff;
+  border: none;
+  border-radius: var(--radius-sm);
+  font-family: inherit;
+  font-size: 12.5px;
+  font-weight: 500;
+  cursor: pointer;
+}
+
+button:hover {
+  background: var(--color-primary-dark);
+}
+
+/* ===== 상태/경고 뱃지 (색상 의미 스펙) ===== */
+
+.badge {
+  display: inline-block;
+  padding: 2px 9px;
+  border-radius: var(--radius-xs);
+  font-size: 11px;
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+.badge-neutral {
+  background: #eef0f3;
+  color: var(--color-text-secondary);
+}
+
+.badge-primary {
+  background: var(--color-primary-tint);
+  color: var(--color-primary-dark);
+}
+
+.badge-success {
+  background: var(--color-success-tint);
+  color: var(--color-success);
+}
+
+.badge-danger {
+  background: var(--color-danger-tint);
+  color: var(--color-danger);
+}
+
+.badge-warning {
+  background: var(--color-warning-tint);
+  color: var(--color-warning);
+}
+
+.alert {
+  padding: 12px 14px;
+  border-radius: var(--radius-md);
+  font-size: 12.5px;
+  margin-bottom: 14px;
+}
+
+.alert-danger {
+  background: var(--color-danger-tint);
+  color: var(--color-danger);
+}
+
+.alert-success {
+  background: var(--color-success-tint);
+  color: var(--color-success);
+}

@@ -21,8 +21,8 @@
                 <td>${o.amount}</td>
                 <td>
                     <c:choose>
-                        <c:when test="${o.status == 'REGISTERED'}">등록됨</c:when>
-                        <c:when test="${o.status == 'CONFIRMED'}">확정(매출 반영됨)</c:when>
+                        <c:when test="${o.status == 'REGISTERED'}"><span class="badge badge-neutral">등록됨</span></c:when>
+                        <c:when test="${o.status == 'CONFIRMED'}"><span class="badge badge-success">확정(매출 반영됨)</span></c:when>
                     </c:choose>
                 </td>
                 <td>
