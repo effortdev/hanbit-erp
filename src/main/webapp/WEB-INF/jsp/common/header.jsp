@@ -62,7 +62,10 @@
     <div class="sidebar-user">
         <div class="user-name"><sec:authentication property="principal.employeeName"/>님</div>
         <div class="user-position"><sec:authentication property="principal.position.label"/></div>
-        <a class="user-logout" href="${pageContext.request.contextPath}/logout">로그아웃</a>
+        <form class="user-logout-form" method="post" action="${pageContext.request.contextPath}/logout">
+            <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
+            <button type="submit" class="user-logout">로그아웃</button>
+        </form>
     </div>
 </aside>
 <main class="content">
