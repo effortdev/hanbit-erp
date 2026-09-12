@@ -106,13 +106,13 @@ CREATE TABLE IF NOT EXISTS approval_line_rule (
     document_type    VARCHAR(20) NOT NULL COMMENT 'VACATION|EXPENSE|PURCHASE|GENERAL',
     step_order       INT NOT NULL,
     approver_level   VARCHAR(20) NOT NULL COMMENT 'TEAM_LEADER|DIVISION_HEAD|CEO',
-    condition_expr   VARCHAR(50) NULL COMMENT 'NULL=항상 포함, BUDGET_80_EXCEEDED=조건부(FR-2-4)',
+    condition_expr   VARCHAR(50) NULL COMMENT 'NULL=항상 포함, AMOUNT_GTE_1M|AMOUNT_GTE_5M=금액 조건부(ADR-011)',
     UNIQUE KEY uq_rule_type_step (document_type, step_order)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 INSERT INTO approval_line_rule (document_type, step_order, approver_level, condition_expr) VALUES
   ('VACATION', 1, 'TEAM_LEADER',   NULL),
-  -- 금액 구간별 결재라인 (docs/adr/ADR-011) — 이전엔 예산 소진율(BUDGET_80_EXCEEDED) 조건이었음
+  -- 금액 구간별 결재라인 (docs/adr/ADR-011) — 이전엔 예산 소진율(BUDGET_80_EXCEEDED) 조건이었으나 폐기(docs/adr/ADR-012)
   ('EXPENSE',  1, 'TEAM_LEADER',   NULL),
   ('EXPENSE',  2, 'DIVISION_HEAD', 'AMOUNT_GTE_1M'),
   ('EXPENSE',  3, 'CEO',           'AMOUNT_GTE_5M'),

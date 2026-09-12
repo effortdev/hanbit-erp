@@ -50,6 +50,7 @@ private boolean isConditionMet(ApprovalCondition condition, Employee drafter, Bi
 ### 기존 데이터/테스트에 미치는 영향 확인
 
 - **`ApprovalLineResolverImplTest`**: `BUDGET_80_EXCEEDED` 관련 테스트 2건은 규칙 데이터를 테스트 코드 안에서 직접 만들어 `ruleMapper`를 목(mock) 처리하고 있어, `schema.sql`의 실제 시드값과 무관하게 동작한다. 즉 EXPENSE 시드를 바꿔도 이 테스트들은 깨지지 않는다 — `BUDGET_80_EXCEEDED`라는 조건 판정 메커니즘 자체(예산 정책 위임 호출)는 여전히 유효하고 테스트도 통과한다. 그래서 `ApprovalCondition`에서 `BUDGET_80_EXCEEDED`를 **제거하지 않고 남겨뒀다** — 지금은 어떤 시드 데이터도 참조하지 않지만, 향후 다른 문서 유형에 "예산 소진율 조건부 단계"가 필요해지면 재사용할 수 있다.
+  > **후속 각주 (코드 감사 시점)**: "향후 재사용" 근거를 요구사항 문서(Module 5/6 FR/NFR) 기준으로 다시 확인해보니 실제로 그럴 계획이 없었다. `BUDGET_80_EXCEEDED`와 `BudgetThresholdPolicy`를 결국 삭제했고, 해당 테스트 2건도 함께 지웠다 (docs/adr/ADR-012의 "후속 기록 — 폐기됨" 참고).
 - **Module 3(근태) 관련 테스트**: VACATION 규칙(`TEAM_LEADER`만, 조건 없음)은 이번 변경과 무관해 영향 없음.
 - 변경 후 `mvn test` 전체 재실행으로 회귀 여부를 확인한다(아래 "검증" 참고).
 

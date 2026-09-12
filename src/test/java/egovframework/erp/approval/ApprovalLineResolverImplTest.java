@@ -6,7 +6,6 @@ import egovframework.erp.approval.domain.ApproverLevel;
 import egovframework.erp.approval.domain.DocumentType;
 import egovframework.erp.approval.mapper.ApprovalLineRuleMapper;
 import egovframework.erp.approval.service.ApprovalLineResolver.ResolvedStep;
-import egovframework.erp.approval.service.BudgetThresholdPolicy;
 import egovframework.erp.approval.service.impl.ApprovalLineResolverImpl;
 import egovframework.erp.common.exception.BusinessException;
 import egovframework.erp.hr.domain.Employee;
@@ -29,14 +28,12 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.lenient;
 import static org.mockito.Mockito.when;
 
 /**
  * docs/adr/ADR-006 핵심 시나리오 검증: 규칙 테이블 + 조직도 혼합 판별, 리더 공석,
- * 대표이사 단수성, 자기결재 스킵, 예산 조건부 단계.
+ * 대표이사 단수성, 자기결재 스킵, 금액 구간 조건부 단계(ADR-011).
  */
 @ExtendWith(MockitoExtension.class)
 class ApprovalLineResolverImplTest {
@@ -47,8 +44,6 @@ class ApprovalLineResolverImplTest {
     private OrgMapper orgMapper;
     @Mock
     private EmployeeRepository employeeRepository;
-    @Mock
-    private BudgetThresholdPolicy budgetThresholdPolicy;
 
     private ApprovalLineResolverImpl resolver;
 
@@ -57,7 +52,7 @@ class ApprovalLineResolverImplTest {
 
     @BeforeEach
     void setUp() {
-        resolver = new ApprovalLineResolverImpl(ruleMapper, orgMapper, employeeRepository, budgetThresholdPolicy);
+        resolver = new ApprovalLineResolverImpl(ruleMapper, orgMapper, employeeRepository);
 
         team = unit(11L, "인사팀", OrgType.TEAM, 1L, 3L); // 팀장 = employeeId 3
         hq = unit(1L, "경영지원본부", OrgType.HQ, null, 2L); // 본부장 = employeeId 2
@@ -110,37 +105,6 @@ class ApprovalLineResolverImplTest {
         Employee staff = employee(4L, "최사원", Position.STAFF, 11L);
 
         assertThrows(BusinessException.class, () -> resolver.resolve(DocumentType.PURCHASE, staff, null));
-    }
-
-    @Test
-    void 예산초과_조건이_미충족이면_대표이사_단계가_빠진다() {
-        when(ruleMapper.selectByDocumentType(DocumentType.EXPENSE)).thenReturn(List.of(
-                rule(DocumentType.EXPENSE, 1, ApproverLevel.TEAM_LEADER, null),
-                rule(DocumentType.EXPENSE, 2, ApproverLevel.CEO, ApprovalCondition.BUDGET_80_EXCEEDED)));
-        when(budgetThresholdPolicy.isExceeded(any(), any())).thenReturn(false);
-        Employee staff = employee(4L, "최사원", Position.STAFF, 11L);
-
-        List<ResolvedStep> steps = resolver.resolve(DocumentType.EXPENSE, staff, new BigDecimal("1000"));
-
-        assertEquals(1, steps.size());
-        assertTrue(steps.stream().noneMatch(s -> s.approverLevel() == ApproverLevel.CEO));
-    }
-
-    @Test
-    void 예산초과_조건이_충족되면_대표이사_단계가_포함된다() {
-        when(ruleMapper.selectByDocumentType(DocumentType.EXPENSE)).thenReturn(List.of(
-                rule(DocumentType.EXPENSE, 1, ApproverLevel.TEAM_LEADER, null),
-                rule(DocumentType.EXPENSE, 2, ApproverLevel.CEO, ApprovalCondition.BUDGET_80_EXCEEDED)));
-        when(budgetThresholdPolicy.isExceeded(any(), any())).thenReturn(true);
-        when(employeeRepository.findByPositionAndStatus(Position.CEO, EmployeeStatus.ACTIVE))
-                .thenReturn(List.of(employee(1L, "김대표", Position.CEO, 1L)));
-        Employee staff = employee(4L, "최사원", Position.STAFF, 11L);
-
-        List<ResolvedStep> steps = resolver.resolve(DocumentType.EXPENSE, staff, new BigDecimal("999999"));
-
-        assertEquals(2, steps.size());
-        assertEquals(ApproverLevel.CEO, steps.get(1).approverLevel());
-        assertEquals(1L, steps.get(1).approverEmployeeId());
     }
 
     @Test

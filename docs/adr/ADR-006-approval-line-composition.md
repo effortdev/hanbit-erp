@@ -83,6 +83,7 @@ Module 2는 의존성 순서상 Module 3/4/5보다 먼저 만들어지므로, �
   ```
   Module 4가 만들어지기 전까지는 `NoBudgetModuleYetPolicy`(항상 `false` 반환 + 경고 로그)를 기본 빈으로 등록한다. Module 4 구현 시 실제 예산 조회 구현체로 교체하고 이 ADR에 후속 각주를 남긴다.
   > **후속 각주 (Module 4 구현 시점)**: `NoBudgetModuleYetPolicy`를 제거하고 `BudgetThresholdPolicyImpl`(Module 4)로 교체했다. 다만 EXPENSE의 대표이사 단계 조건은 ADR-011에서 금액 기준(`AMOUNT_GTE_5M`)으로 바뀌어, 지금은 이 정책을 실제로 소비하는 결재 규칙이 없다 — 인터페이스 계약 자체는 정직하게 구현해뒀다(docs/adr/ADR-012 참고).
+  > **추가 후속 각주 (코드 감사 시점)**: 위 판단을 다시 확인한 결과 실제로 재사용될 계획이 없는 죽은 코드였다. `BudgetThresholdPolicy` 인터페이스·구현체·`BUDGET_80_EXCEEDED` 조건을 전부 삭제했다 (docs/adr/ADR-012의 "후속 기록 — 폐기됨" 참고).
 - **FR-2-5(휴가 승인 시 근태 반영), FR-2-6(구매요청 승인 시 구매내역 생성)**: 결재가 "완전히 끝난 후" 다른 모듈이 반응하면 되는 사후 통지이므로 **Spring 애플리케이션 이벤트**로 분리한다.
   ```java
   public class DocumentApprovedEvent extends ApplicationEvent {

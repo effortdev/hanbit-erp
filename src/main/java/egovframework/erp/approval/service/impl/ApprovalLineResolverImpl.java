@@ -6,7 +6,6 @@ import egovframework.erp.approval.domain.ApproverLevel;
 import egovframework.erp.approval.domain.DocumentType;
 import egovframework.erp.approval.mapper.ApprovalLineRuleMapper;
 import egovframework.erp.approval.service.ApprovalLineResolver;
-import egovframework.erp.approval.service.BudgetThresholdPolicy;
 import egovframework.erp.common.exception.BusinessException;
 import egovframework.erp.hr.domain.Employee;
 import egovframework.erp.hr.domain.EmployeeStatus;
@@ -34,17 +33,14 @@ public class ApprovalLineResolverImpl implements ApprovalLineResolver {
     private final ApprovalLineRuleMapper ruleMapper;
     private final OrgMapper orgMapper;
     private final EmployeeRepository employeeRepository;
-    private final BudgetThresholdPolicy budgetThresholdPolicy;
 
     @Autowired
     public ApprovalLineResolverImpl(ApprovalLineRuleMapper ruleMapper,
                                      OrgMapper orgMapper,
-                                     EmployeeRepository employeeRepository,
-                                     BudgetThresholdPolicy budgetThresholdPolicy) {
+                                     EmployeeRepository employeeRepository) {
         this.ruleMapper = ruleMapper;
         this.orgMapper = orgMapper;
         this.employeeRepository = employeeRepository;
-        this.budgetThresholdPolicy = budgetThresholdPolicy;
     }
 
     @Override
@@ -53,7 +49,7 @@ public class ApprovalLineResolverImpl implements ApprovalLineResolver {
         List<ResolvedStep> resolved = new ArrayList<>();
 
         for (ApprovalLineRuleVO rule : rules) {
-            if (rule.getConditionExpr() != null && !isConditionMet(rule.getConditionExpr(), drafter, amount)) {
+            if (rule.getConditionExpr() != null && !isConditionMet(rule.getConditionExpr(), amount)) {
                 continue; // 조건 미충족 - 이 단계는 결재라인에서 제외 (FR-2-4, ADR-011)
             }
 
@@ -67,11 +63,9 @@ public class ApprovalLineResolverImpl implements ApprovalLineResolver {
         return resolved;
     }
 
-    /** 외부 모듈 조회가 필요한 조건(예산 소진율)과 입력값만으로 계산되는 조건(금액 구간)을 함께 다룬다 (docs/adr/ADR-011). */
-    private boolean isConditionMet(ApprovalCondition condition, Employee drafter, BigDecimal amount) {
+    /** 금액 구간 조건 판정 (docs/adr/ADR-011). */
+    private boolean isConditionMet(ApprovalCondition condition, BigDecimal amount) {
         switch (condition) {
-            case BUDGET_80_EXCEEDED:
-                return budgetThresholdPolicy.isExceeded(drafter.getOrgUnitId(), amount);
             case AMOUNT_GTE_1M:
                 return amount != null && amount.compareTo(ONE_MILLION) >= 0;
             case AMOUNT_GTE_5M:
