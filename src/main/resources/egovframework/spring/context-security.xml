@@ -9,6 +9,7 @@
     <!-- docs/adr/ADR-005: 세션 기반 폼 로그인. maximumSessions(1)로 동일 계정 중복 로그인 차단. -->
     <http auto-config="false" use-expressions="true">
         <intercept-url pattern="/login" access="permitAll()"/>
+        <intercept-url pattern="/.well-known/**" access="permitAll()"/>
         <intercept-url pattern="/**" access="isAuthenticated()"/>
         <form-login login-page="/login" login-processing-url="/login"
                     default-target-url="/" authentication-failure-url="/login?error"/>
