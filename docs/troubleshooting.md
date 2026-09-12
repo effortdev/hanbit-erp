@@ -1,5 +1,18 @@
 # 트러블슈팅 로그
 
+## 2026-09-12 — 전자결재 기안 링크에서 `DocumentType` enum 변환 실패
+
+- **증상**: `/approval` 목록 화면의 "기안" 링크를 누르면 `Failed to convert value of type 'java.lang.String' to required type 'DocumentType'` 오류.
+- **원인**: `GET /approval/draft/{type}`는 Spring의 기본 `@PathVariable` enum 컨버터를 쓰므로 enum 상수 이름(대문자, 예: `VACATION`)이 정확히 와야 하는데, `inbox.jsp`에서 링크를 만들 때 `fn:toLowerCase(t)`로 소문자화해서 넘겼음. 반면 각 문서 유형의 `POST /approval/draft/{vacation|expense|purchase|general}`는 컨트롤러에 소문자로 하드코딩되어 있어, 같은 화면 안에 대문자/소문자 두 관례가 섞여 있었던 게 근본 원인.
+- **해결**: GET 링크(`inbox.jsp`)는 enum 그대로(`${t}`, 대문자)를 쓰도록 수정. `draft.jsp`가 렌더링하는 POST 폼의 action은 `fn:toLowerCase(documentType)`으로 소문자화해 하드코딩된 POST 매핑과 맞춘다. 즉 "GET은 enum 이름 그대로, POST는 소문자"로 규칙을 명확히 분리.
+
+## 2026-09-12 — Spring Security 도입 후 `tomcat7-maven-plugin`이 `NoClassDefFoundError`로 기동 실패
+
+- **증상**: Module 2에서 Spring Security(`maximumSessions` + `HttpSessionEventPublisher`)를 추가한 뒤 `mvn tomcat7:run`이 `NoClassDefFoundError: javax/servlet/http/HttpSessionIdListener`로 기동 실패.
+- **원인**: `HttpSessionIdListener`는 Servlet 3.1에서 추가된 인터페이스인데, `tomcat7-maven-plugin`이 내장하는 Tomcat은 7.0.47(2013년, Servlet 3.0)이라 아예 존재하지 않음. Spring Security 5.8.x의 `HttpSessionEventPublisher`는 이 인터페이스를 구현하므로 클래스 로딩 자체가 불가능.
+- **해결**: 로컬 실행 도구를 `tomcat7-maven-plugin`에서 `jetty-maven-plugin`(Jetty 9.4.x, Servlet 3.1 지원)으로 교체 (`pom.xml`). `mvn jetty:run`으로 실행. 배포용 산출물은 여전히 표준 WAR(`mvn package`)이므로 실제 운영 배포 방식(Tomcat 8.5/9)에는 영향 없음 — 이건 어디까지나 "로컬 개발 중 즉시 확인용" 도구 교체다.
+
+
 모듈 진행 중 발생한 이슈와 원인/해결 과정을 시간순으로 기록한다. (포트폴리오 자료 겸용)
 
 ---

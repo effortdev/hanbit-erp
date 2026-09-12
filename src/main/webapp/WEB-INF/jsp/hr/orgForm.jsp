@@ -4,6 +4,7 @@
 <div class="card">
     <h2>조직 등록</h2>
     <form method="post" action="${pageContext.request.contextPath}/hr/org">
+        <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
         <label>유형</label>
         <select name="type">
             <c:forEach var="t" items="${orgTypes}">

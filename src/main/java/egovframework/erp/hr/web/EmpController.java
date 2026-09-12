@@ -3,6 +3,7 @@ package egovframework.erp.hr.web;
 import egovframework.erp.hr.domain.Position;
 import egovframework.erp.hr.service.EmpService;
 import egovframework.erp.hr.service.OrgService;
+import egovframework.erp.security.SecurityUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.stereotype.Controller;
@@ -16,8 +17,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import java.time.LocalDate;
 
 /**
- * 로그인/인증은 아직 없다. 인증 방식은 전자결재 모듈(Module 2) ADR에서 다룰 예정이라
- * 발령 처리자(changedBy)는 화면에서 직접 입력받는다 (README 참고).
+ * 발령 처리자(changedBy)는 Module 2에서 도입된 로그인 사용자 정보(SecurityUtils)에서 가져온다
+ * — Module 1 README에 남겨두었던 "인증 방식은 Module 2에서 다룬다"는 제약이 여기서 해소된다.
  */
 @Controller
 @RequestMapping("/hr/emp")
@@ -56,14 +57,14 @@ public class EmpController {
     }
 
     @PostMapping("/{id}/transfer")
-    public String transfer(@PathVariable Long id, @RequestParam Long newOrgUnitId, @RequestParam String changedBy) {
-        empService.transfer(id, newOrgUnitId, changedBy);
+    public String transfer(@PathVariable Long id, @RequestParam Long newOrgUnitId) {
+        empService.transfer(id, newOrgUnitId, SecurityUtils.currentUser().getEmployeeName());
         return "redirect:/hr/emp/" + id + "/history";
     }
 
     @PostMapping("/{id}/promote")
-    public String promote(@PathVariable Long id, @RequestParam Position newPosition, @RequestParam String changedBy) {
-        empService.promote(id, newPosition, changedBy);
+    public String promote(@PathVariable Long id, @RequestParam Position newPosition) {
+        empService.promote(id, newPosition, SecurityUtils.currentUser().getEmployeeName());
         return "redirect:/hr/emp/" + id + "/history";
     }
 

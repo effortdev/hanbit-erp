@@ -7,17 +7,18 @@
         <result property="name" column="name"/>
         <result property="type" column="type"/>
         <result property="parentId" column="parent_id"/>
+        <result property="leaderEmployeeId" column="leader_employee_id"/>
     </resultMap>
 
     <!-- 본부-팀 2단계 고정 구조라 재귀 쿼리 없이 정렬만으로 트리 구성이 가능하다 (docs/adr/ADR-004) -->
     <select id="selectOrgTree" resultMap="orgUnitResultMap">
-        SELECT id, name, type, parent_id
+        SELECT id, name, type, parent_id, leader_employee_id
         FROM org_unit
         ORDER BY COALESCE(parent_id, id), type ASC, id
     </select>
 
     <select id="selectOrgUnit" parameterType="long" resultMap="orgUnitResultMap">
-        SELECT id, name, type, parent_id
+        SELECT id, name, type, parent_id, leader_employee_id
         FROM org_unit
         WHERE id = #{id}
     </select>
@@ -26,5 +27,10 @@
         INSERT INTO org_unit (name, type, parent_id)
         VALUES (#{name}, #{type}, #{parentId})
     </insert>
+
+    <update id="updateLeader">
+        UPDATE org_unit SET leader_employee_id = #{leaderEmployeeId}
+        WHERE id = #{orgUnitId}
+    </update>
 
 </mapper>

@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans:beans xmlns="http://www.springframework.org/schema/security"
+             xmlns:beans="http://www.springframework.org/schema/beans"
+             xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+             xsi:schemaLocation="
+               http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+               http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security.xsd">
+
+    <!-- docs/adr/ADR-005: 세션 기반 폼 로그인. maximumSessions(1)로 동일 계정 중복 로그인 차단. -->
+    <http auto-config="false" use-expressions="true">
+        <intercept-url pattern="/login" access="permitAll()"/>
+        <intercept-url pattern="/**" access="isAuthenticated()"/>
+        <form-login login-page="/login" login-processing-url="/login"
+                    default-target-url="/" authentication-failure-url="/login?error"/>
+        <logout logout-url="/logout" logout-success-url="/login?logout"/>
+        <session-management>
+            <concurrency-control max-sessions="1" error-if-maximum-exceeded="false"/>
+        </session-management>
+        <!-- CSRF는 기본 활성화(auto-config 미사용이어도 <http> 하위 기본값은 enabled) -->
+    </http>
+
+    <authentication-manager>
+        <authentication-provider user-service-ref="erpUserDetailsService">
+            <password-encoder ref="passwordEncoder"/>
+        </authentication-provider>
+    </authentication-manager>
+
+    <beans:bean id="passwordEncoder" class="org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder"/>
+
+</beans:beans>

@@ -17,6 +17,7 @@
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
     <spring.version>5.3.27</spring.version>
+    <spring-security.version>5.8.3</spring-security.version>
     <mybatis.version>3.5.13</mybatis.version>
     <mybatis-spring.version>2.1.1</mybatis-spring.version>
     <spring-data-jpa.version>2.7.12</spring-data-jpa.version>
@@ -56,6 +57,28 @@
     <dependency>
       <groupId>org.springframework</groupId>
       <artifactId>spring-tx</artifactId>
+    </dependency>
+
+    <!-- Spring Security (ADR-005: 세션 기반 폼 로그인) -->
+    <dependency>
+      <groupId>org.springframework.security</groupId>
+      <artifactId>spring-security-web</artifactId>
+      <version>${spring-security.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework.security</groupId>
+      <artifactId>spring-security-config</artifactId>
+      <version>${spring-security.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework.security</groupId>
+      <artifactId>spring-security-taglibs</artifactId>
+      <version>${spring-security.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework.security</groupId>
+      <artifactId>spring-security-crypto</artifactId>
+      <version>${spring-security.version}</version>
     </dependency>
 
     <!-- MyBatis -->
@@ -182,13 +205,23 @@
           <failOnMissingWebXml>true</failOnMissingWebXml>
         </configuration>
       </plugin>
+      <!--
+        tomcat7-maven-plugin(내장 Tomcat 7.0.47, 2013년산, Servlet 3.0)은 Spring Security의
+        HttpSessionEventPublisher가 요구하는 HttpSessionIdListener(Servlet 3.1+)를 제공하지
+        못해 NoClassDefFoundError로 기동이 깨진다 (docs/troubleshooting.md). Servlet 3.1을
+        지원하는 jetty-maven-plugin(Jetty 9.4.x)으로 로컬 실행 도구를 교체한다.
+      -->
       <plugin>
-        <groupId>org.apache.tomcat.maven</groupId>
-        <artifactId>tomcat7-maven-plugin</artifactId>
-        <version>2.2</version>
+        <groupId>org.eclipse.jetty</groupId>
+        <artifactId>jetty-maven-plugin</artifactId>
+        <version>9.4.53.v20231009</version>
         <configuration>
-          <path>/</path>
-          <port>8081</port>
+          <httpConnector>
+            <port>8081</port>
+          </httpConnector>
+          <webApp>
+            <contextPath>/</contextPath>
+          </webApp>
         </configuration>
       </plugin>
       <plugin>

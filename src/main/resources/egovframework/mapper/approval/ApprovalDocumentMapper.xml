@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="egovframework.erp.approval.mapper.ApprovalDocumentMapper">
+
+    <resultMap id="documentResultMap" type="egovframework.erp.approval.domain.ApprovalDocumentVO">
+        <id property="id" column="id"/>
+        <result property="documentType" column="document_type"/>
+        <result property="title" column="title"/>
+        <result property="content" column="content"/>
+        <result property="amount" column="amount"/>
+        <result property="startDate" column="start_date"/>
+        <result property="endDate" column="end_date"/>
+        <result property="drafterId" column="drafter_id"/>
+        <result property="createdAt" column="created_at"/>
+        <result property="drafterName" column="drafter_name"/>
+    </resultMap>
+
+    <insert id="insertDocument" parameterType="egovframework.erp.approval.domain.ApprovalDocumentVO"
+            useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO approval_document (document_type, title, content, amount, start_date, end_date, drafter_id)
+        VALUES (#{documentType}, #{title}, #{content}, #{amount}, #{startDate}, #{endDate}, #{drafterId})
+    </insert>
+
+    <select id="selectById" resultMap="documentResultMap">
+        SELECT d.id, d.document_type, d.title, d.content, d.amount, d.start_date, d.end_date,
+               d.drafter_id, d.created_at, e.name AS drafter_name
+        FROM approval_document d
+        JOIN employee e ON e.id = d.drafter_id
+        WHERE d.id = #{id}
+    </select>
+
+    <select id="selectByDrafterId" resultMap="documentResultMap">
+        SELECT d.id, d.document_type, d.title, d.content, d.amount, d.start_date, d.end_date,
+               d.drafter_id, d.created_at, e.name AS drafter_name
+        FROM approval_document d
+        JOIN employee e ON e.id = d.drafter_id
+        WHERE d.drafter_id = #{drafterId}
+        ORDER BY d.created_at DESC, d.id DESC
+    </select>
+
+    <select id="selectByApproverCandidate" resultMap="documentResultMap">
+        SELECT DISTINCT d.id, d.document_type, d.title, d.content, d.amount, d.start_date, d.end_date,
+               d.drafter_id, d.created_at, e.name AS drafter_name
+        FROM approval_document d
+        JOIN employee e ON e.id = d.drafter_id
+        JOIN approval_step s ON s.document_id = d.id
+        WHERE s.approver_employee_id = #{employeeId}
+        ORDER BY d.created_at DESC, d.id DESC
+    </select>
+
+</mapper>

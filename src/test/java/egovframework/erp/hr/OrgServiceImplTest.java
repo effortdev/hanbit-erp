@@ -4,6 +4,7 @@ import egovframework.erp.common.exception.BusinessException;
 import egovframework.erp.hr.domain.OrgType;
 import egovframework.erp.hr.domain.OrgUnitVO;
 import egovframework.erp.hr.mapper.OrgMapper;
+import egovframework.erp.hr.repository.EmployeeRepository;
 import egovframework.erp.hr.service.impl.OrgServiceImpl;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -23,10 +24,12 @@ class OrgServiceImplTest {
 
     @Mock
     private OrgMapper orgMapper;
+    @Mock
+    private EmployeeRepository employeeRepository;
 
     @Test
     void hq는_상위조직을_가질_수_없다() {
-        OrgServiceImpl service = new OrgServiceImpl(orgMapper);
+        OrgServiceImpl service = new OrgServiceImpl(orgMapper, employeeRepository);
         OrgUnitVO hq = unit("신설본부", OrgType.HQ, 1L);
 
         assertThrows(BusinessException.class, () -> service.registerOrgUnit(hq));
@@ -34,7 +37,7 @@ class OrgServiceImplTest {
 
     @Test
     void team은_상위조직이_필수다() {
-        OrgServiceImpl service = new OrgServiceImpl(orgMapper);
+        OrgServiceImpl service = new OrgServiceImpl(orgMapper, employeeRepository);
         OrgUnitVO team = unit("신설팀", OrgType.TEAM, null);
 
         assertThrows(BusinessException.class, () -> service.registerOrgUnit(team));
@@ -42,7 +45,7 @@ class OrgServiceImplTest {
 
     @Test
     void team의_상위조직은_반드시_본부여야_한다() {
-        OrgServiceImpl service = new OrgServiceImpl(orgMapper);
+        OrgServiceImpl service = new OrgServiceImpl(orgMapper, employeeRepository);
         OrgUnitVO anotherTeam = unit("다른팀", OrgType.TEAM, 11L);
         when(orgMapper.selectOrgUnit(11L)).thenReturn(unit("인사팀", OrgType.TEAM, 1L));
 
@@ -51,7 +54,7 @@ class OrgServiceImplTest {
 
     @Test
     void 유효한_팀은_정상_등록된다() {
-        OrgServiceImpl service = new OrgServiceImpl(orgMapper);
+        OrgServiceImpl service = new OrgServiceImpl(orgMapper, employeeRepository);
         OrgUnitVO team = unit("신설팀", OrgType.TEAM, 1L);
         when(orgMapper.selectOrgUnit(1L)).thenReturn(unit("경영지원본부", OrgType.HQ, null));
 
@@ -62,7 +65,7 @@ class OrgServiceImplTest {
 
     @Test
     void 유효한_본부는_정상_등록된다() {
-        OrgServiceImpl service = new OrgServiceImpl(orgMapper);
+        OrgServiceImpl service = new OrgServiceImpl(orgMapper, employeeRepository);
         OrgUnitVO hq = unit("신설본부", OrgType.HQ, null);
 
         service.registerOrgUnit(hq);

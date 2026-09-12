@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="egovframework.erp.approval.mapper.ApprovalStepMapper">
+
+    <resultMap id="stepResultMap" type="egovframework.erp.approval.domain.ApprovalStepVO">
+        <id property="id" column="id"/>
+        <result property="documentId" column="document_id"/>
+        <result property="stepOrder" column="step_order"/>
+        <result property="approverLevel" column="approver_level"/>
+        <result property="approverEmployeeId" column="approver_employee_id"/>
+        <result property="approverName" column="approver_name"/>
+        <result property="actionResult" column="action_result"/>
+        <result property="actionComment" column="action_comment"/>
+    </resultMap>
+
+    <insert id="insertStep" parameterType="egovframework.erp.approval.domain.ApprovalStepVO"
+            useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO approval_step (document_id, step_order, approver_level, approver_employee_id)
+        VALUES (#{documentId}, #{stepOrder}, #{approverLevel}, #{approverEmployeeId})
+    </insert>
+
+    <!-- approval_action은 step당 최대 1건만 쌓이도록 서비스 계층에서 보장하므로 LEFT JOIN해도 행이 늘지 않는다 -->
+    <select id="selectByDocumentId" resultMap="stepResultMap">
+        SELECT s.id, s.document_id, s.step_order, s.approver_level, s.approver_employee_id,
+               e.name AS approver_name, a.action AS action_result, a.comment AS action_comment
+        FROM approval_step s
+        JOIN employee e ON e.id = s.approver_employee_id
+        LEFT JOIN approval_action a ON a.step_id = s.id
+        WHERE s.document_id = #{documentId}
+        ORDER BY s.step_order
+    </select>
+
+</mapper>

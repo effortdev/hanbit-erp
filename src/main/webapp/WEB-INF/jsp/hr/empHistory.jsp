@@ -8,6 +8,7 @@
 <div class="card">
     <h3>부서이동</h3>
     <form method="post" action="${pageContext.request.contextPath}/hr/emp/${employee.id}/transfer">
+        <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
         <label>새 소속 조직</label>
         <select name="newOrgUnitId">
             <c:forEach var="org" items="${orgUnits}">
@@ -16,8 +17,6 @@
                 </c:if>
             </c:forEach>
         </select>
-        <label>처리자</label>
-        <input type="text" name="changedBy" required="required" placeholder="예: 인사팀 홍길동"/>
         <button type="submit">발령 처리</button>
     </form>
 </div>
@@ -25,6 +24,7 @@
 <div class="card">
     <h3>승진</h3>
     <form method="post" action="${pageContext.request.contextPath}/hr/emp/${employee.id}/promote">
+        <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
         <label>새 직급</label>
         <select name="newPosition">
             <option value="STAFF">사원</option>
@@ -35,8 +35,6 @@
             <option value="DIVISION_HEAD">본부장</option>
             <option value="CEO">대표이사</option>
         </select>
-        <label>처리자</label>
-        <input type="text" name="changedBy" required="required" placeholder="예: 인사팀 홍길동"/>
         <button type="submit">승진 처리</button>
     </form>
 </div>

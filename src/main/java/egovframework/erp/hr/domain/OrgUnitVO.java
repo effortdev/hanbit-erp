@@ -9,6 +9,7 @@ public class OrgUnitVO {
     private String name;
     private OrgType type;
     private Long parentId;
+    private Long leaderEmployeeId;
 
     public Long getId() {
         return id;
@@ -40,5 +41,14 @@ public class OrgUnitVO {
 
     public void setParentId(Long parentId) {
         this.parentId = parentId;
+    }
+
+    /** 이 조직의 결재권자(팀장/본부장). Module 2 결재라인 판별에 사용 (docs/adr/ADR-006). */
+    public Long getLeaderEmployeeId() {
+        return leaderEmployeeId;
+    }
+
+    public void setLeaderEmployeeId(Long leaderEmployeeId) {
+        this.leaderEmployeeId = leaderEmployeeId;
     }
 }

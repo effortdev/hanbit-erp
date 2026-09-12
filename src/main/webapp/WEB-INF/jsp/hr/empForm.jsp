@@ -4,6 +4,7 @@
 <div class="card">
     <h2>사원 등록</h2>
     <form method="post" action="${pageContext.request.contextPath}/hr/emp">
+        <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
         <label>이름</label>
         <input type="text" name="name" required="required"/>
 

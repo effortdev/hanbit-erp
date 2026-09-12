@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="egovframework.erp.security.mapper.AccountMapper">
+
+    <resultMap id="accountResultMap" type="egovframework.erp.security.AccountVO">
+        <id property="employeeId" column="employee_id"/>
+        <result property="username" column="username"/>
+        <result property="passwordHash" column="password_hash"/>
+        <result property="enabled" column="enabled"/>
+        <result property="employeeName" column="employee_name"/>
+        <result property="position" column="position"/>
+        <result property="orgUnitId" column="org_unit_id"/>
+    </resultMap>
+
+    <select id="selectByUsername" parameterType="string" resultMap="accountResultMap">
+        SELECT a.employee_id, a.username, a.password_hash, a.enabled,
+               e.name AS employee_name, e.position, e.org_unit_id
+        FROM account a
+        JOIN employee e ON e.id = a.employee_id
+        WHERE a.username = #{username}
+    </select>
+
+</mapper>
