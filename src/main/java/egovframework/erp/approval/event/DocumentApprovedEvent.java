@@ -4,10 +4,10 @@ import egovframework.erp.approval.domain.DocumentType;
 import org.springframework.context.ApplicationEvent;
 
 /**
- * 문서의 마지막 결재 단계가 승인되었을 때 발행된다. Module 3(근태)/Module 5(재고/구매)가
- * 아직 없어 이 이벤트를 직접 구독하는 리스너가 없으므로, 지금은 로그만 남기는 리스너
- * ({@link DocumentApprovedLogListener})만 등록되어 있다 — 향후 두 모듈이 각자
- * {@code @EventListener}를 등록해 FR-2-5/FR-2-6을 처리한다 (docs/adr/ADR-006).
+ * 문서의 마지막 결재 단계가 승인되었을 때 발행된다. Module 3(근태)가 {@code AttendanceApprovalListener}로
+ * FR-2-5(휴가 반영)를 처리한다 (docs/adr/ADR-008). Module 5(재고/구매)는 아직 없어 임시로
+ * 로그만 남기는 리스너({@link DocumentApprovedLogListener})가 대신 받고 있다 — 구현 시 전용
+ * 리스너로 FR-2-6을 처리한다 (docs/adr/ADR-006).
  */
 public class DocumentApprovedEvent extends ApplicationEvent {
 

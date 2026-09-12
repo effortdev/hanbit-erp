@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="egovframework.erp.attendance.mapper.VacationPolicyMapper">
+
+    <select id="selectAnnualDays" parameterType="int" resultType="int">
+        SELECT annual_days
+        FROM vacation_policy
+        WHERE min_years &lt;= #{yearsOfService}
+          AND (max_years IS NULL OR max_years >= #{yearsOfService})
+        ORDER BY min_years DESC
+        LIMIT 1
+    </select>
+
+</mapper>

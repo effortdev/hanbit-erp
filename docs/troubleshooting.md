@@ -1,5 +1,12 @@
 # 트러블슈팅 로그
 
+## 2026-09-12 — `VacationPolicyMapper.xml`의 `<=` 때문에 MyBatis 매퍼 파싱 실패
+
+- **증상**: Module 3 추가 후 `mvn jetty:run`이 `SAXParseException: The content of elements must consist of well-formed character data or markup`로 `sqlSessionFactory` 빈 생성 실패.
+- **원인**: `VacationPolicyMapper.xml`의 SQL에 `WHERE min_years <= #{yearsOfService}`를 그대로 썼는데, `<`는 XML에서 태그 시작 문자라 SQL이 아니라 잘못된 XML로 파싱됨. Mockito 기반 단위 테스트는 이 XML을 전혀 로드하지 않기 때문에(인터페이스만 목킹) 테스트가 다 통과한 뒤에도 이 버그가 남아 있었고, 실제 Spring 컨텍스트 기동(`mvn jetty:run`) 시점에야 드러났다.
+- **해결**: `<`를 `&lt;`로 이스케이프. MyBatis where절에서 `<`, `<=`, `&`가 들어가면 XML 이스케이프(`&lt;`, `&lt;=`, `&amp;`)나 `<![CDATA[...]]>`가 필요하다는 점을 다시 확인.
+
+
 ## 2026-09-12 — 전자결재 기안 링크에서 `DocumentType` enum 변환 실패
 
 - **증상**: `/approval` 목록 화면의 "기안" 링크를 누르면 `Failed to convert value of type 'java.lang.String' to required type 'DocumentType'` 오류.

@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="egovframework.erp.attendance.mapper.AttendanceRecordMapper">
+
+    <resultMap id="recordResultMap" type="egovframework.erp.attendance.domain.AttendanceRecordVO">
+        <id property="id" column="id"/>
+        <result property="employeeId" column="employee_id"/>
+        <result property="workDate" column="work_date"/>
+        <result property="checkInTime" column="check_in_time"/>
+        <result property="checkOutTime" column="check_out_time"/>
+    </resultMap>
+
+    <select id="selectByEmployeeAndDate" resultMap="recordResultMap">
+        SELECT id, employee_id, work_date, check_in_time, check_out_time
+        FROM attendance_record
+        WHERE employee_id = #{employeeId} AND work_date = #{workDate}
+    </select>
+
+    <select id="selectByEmployeeId" resultMap="recordResultMap">
+        SELECT id, employee_id, work_date, check_in_time, check_out_time
+        FROM attendance_record
+        WHERE employee_id = #{employeeId}
+        ORDER BY work_date DESC
+    </select>
+
+    <insert id="insertCheckIn">
+        INSERT INTO attendance_record (employee_id, work_date, check_in_time)
+        VALUES (#{employeeId}, #{workDate}, #{checkInTime})
+    </insert>
+
+    <update id="updateCheckOut">
+        UPDATE attendance_record SET check_out_time = #{checkOutTime}
+        WHERE id = #{id}
+    </update>
+
+</mapper>

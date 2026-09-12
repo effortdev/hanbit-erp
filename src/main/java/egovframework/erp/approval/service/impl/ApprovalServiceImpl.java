@@ -8,6 +8,7 @@ import egovframework.erp.approval.domain.ApprovalStepRules;
 import egovframework.erp.approval.domain.ApprovalStepVO;
 import egovframework.erp.approval.domain.DocumentType;
 import egovframework.erp.approval.event.DocumentApprovedEvent;
+import egovframework.erp.approval.event.DocumentRejectedEvent;
 import egovframework.erp.approval.mapper.ApprovalActionMapper;
 import egovframework.erp.approval.mapper.ApprovalDocumentMapper;
 import egovframework.erp.approval.mapper.ApprovalStepMapper;
@@ -185,6 +186,9 @@ public class ApprovalServiceImpl implements ApprovalService {
         boolean isLastStep = steps.stream().mapToInt(ApprovalStepVO::getStepOrder).max().orElse(0) == target.getStepOrder();
         if (action == ActionType.APPROVE && isLastStep) {
             eventPublisher.publishEvent(new DocumentApprovedEvent(this, documentId, document.getDocumentType()));
+        } else if (action == ActionType.REJECT) {
+            // DocumentApprovedEvent와 대칭 (docs/adr/ADR-008 — Module 3 구현 중 반려 이벤트 부재를 발견해 보완)
+            eventPublisher.publishEvent(new DocumentRejectedEvent(this, documentId, document.getDocumentType(), comment));
         }
     }
 

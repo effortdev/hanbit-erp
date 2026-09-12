@@ -157,3 +157,59 @@ CREATE TABLE IF NOT EXISTS approval_action (
     acted_at    DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
     CONSTRAINT fk_approval_action_step FOREIGN KEY (step_id) REFERENCES approval_step (id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- =========================================================
+-- Module 3: 근태관리 (egovframework.erp.attendance)
+-- =========================================================
+
+-- 근속연수별 연차 부여일수 규칙 (docs/adr/ADR-009). "1년 미만 11일, 이후 매년 +1일, 상한 25일"
+CREATE TABLE IF NOT EXISTS vacation_policy (
+    id           BIGINT AUTO_INCREMENT PRIMARY KEY,
+    min_years    INT NOT NULL,
+    max_years    INT NULL COMMENT 'NULL = 상한 없음(그 이상 전부 해당)',
+    annual_days  INT NOT NULL,
+    UNIQUE KEY uq_vacation_policy_min_years (min_years)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+INSERT INTO vacation_policy (min_years, max_years, annual_days) VALUES
+  (0, 0, 11),
+  (1, 1, 12),
+  (2, 2, 13),
+  (3, 3, 14),
+  (4, 4, 15),
+  (5, 5, 16),
+  (6, 6, 17),
+  (7, 7, 18),
+  (8, 8, 19),
+  (9, 9, 20),
+  (10, 10, 21),
+  (11, 11, 22),
+  (12, 12, 23),
+  (13, 13, 24),
+  (14, NULL, 25);
+
+-- 휴가신청: 전자결재 문서와 1:1 연결 (docs/adr/ADR-008). days는 신청 시점 스냅샷(docs/adr/ADR-009).
+CREATE TABLE IF NOT EXISTS attendance_vacation_request (
+    id                     BIGINT AUTO_INCREMENT PRIMARY KEY,
+    employee_id            BIGINT NOT NULL,
+    start_date             DATE NOT NULL,
+    end_date               DATE NOT NULL,
+    days                   INT NOT NULL,
+    reason                 VARCHAR(500) NULL,
+    status                 VARCHAR(10) NOT NULL DEFAULT 'PENDING' COMMENT 'PENDING|APPROVED|REJECTED',
+    approval_document_id   BIGINT NOT NULL,
+    created_at             DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT fk_vacation_request_employee FOREIGN KEY (employee_id) REFERENCES employee (id),
+    CONSTRAINT fk_vacation_request_document FOREIGN KEY (approval_document_id) REFERENCES approval_document (id)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- 출퇴근 기록: 사원 자가입력, 서버 시각 기준 (docs/adr/ADR-010)
+CREATE TABLE IF NOT EXISTS attendance_record (
+    id              BIGINT AUTO_INCREMENT PRIMARY KEY,
+    employee_id     BIGINT NOT NULL,
+    work_date       DATE NOT NULL,
+    check_in_time   DATETIME NULL,
+    check_out_time  DATETIME NULL,
+    UNIQUE KEY uq_attendance_employee_date (employee_id, work_date),
+    CONSTRAINT fk_attendance_employee FOREIGN KEY (employee_id) REFERENCES employee (id)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;

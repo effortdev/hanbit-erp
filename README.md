@@ -11,6 +11,7 @@
 | eGovFrame 런타임 | **RTE jar 미사용, 순수 Spring 5.3.x 구현** | `docs/adr/ADR-002-egovframe-runtime-strategy.md` — 반드시 읽어볼 것 |
 | 화면 | Spring MVC + JSP | eGovFrame 전통 방식 |
 | 인증 | Spring Security + 세션 기반 폼 로그인 | `docs/adr/ADR-005-authentication.md` |
+| 모듈 간 연동 | 정방향은 직접 서비스 호출, 역방향은 Spring 이벤트(`@TransactionalEventListener`) | `docs/adr/ADR-006`, `ADR-008` |
 | DB | MySQL 8 (Docker Compose) | `docker-compose.yml` |
 | 빌드 | Maven, Java 17 | `pom.xml` |
 | 로컬 실행 | Jetty(`jetty-maven-plugin`) | 배포 산출물은 표준 WAR — `docs/troubleshooting.md` 참고 |
@@ -37,7 +38,7 @@ mvn jetty:run
 
 1. 조직/사원관리 (기반 도메인) — **완료**
 2. 전자결재 — **완료**
-3. 근태관리
+3. 근태관리 — **완료**
 4. 예산/지출관리
 5. 재고/구매관리
 6. 영업/매출관리
