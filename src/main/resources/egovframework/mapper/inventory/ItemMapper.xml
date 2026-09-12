@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="egovframework.erp.inventory.mapper.ItemMapper">
+
+    <resultMap id="itemResultMap" type="egovframework.erp.inventory.domain.ItemVO">
+        <id property="id" column="id"/>
+        <result property="name" column="name"/>
+        <result property="unit" column="unit"/>
+        <result property="currentStock" column="current_stock"/>
+        <result property="safetyStock" column="safety_stock"/>
+    </resultMap>
+
+    <insert id="insertItem" parameterType="egovframework.erp.inventory.domain.ItemVO"
+            useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO item (name, unit, current_stock, safety_stock)
+        VALUES (#{name}, #{unit}, #{currentStock}, #{safetyStock})
+    </insert>
+
+    <select id="selectById" resultMap="itemResultMap">
+        SELECT id, name, unit, current_stock, safety_stock FROM item WHERE id = #{id}
+    </select>
+
+    <select id="selectAll" resultMap="itemResultMap">
+        SELECT id, name, unit, current_stock, safety_stock FROM item ORDER BY name
+    </select>
+
+    <update id="increaseStock">
+        UPDATE item SET current_stock = current_stock + #{quantity} WHERE id = #{itemId}
+    </update>
+
+</mapper>

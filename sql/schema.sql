@@ -116,9 +116,10 @@ INSERT INTO approval_line_rule (document_type, step_order, approver_level, condi
   ('EXPENSE',  1, 'TEAM_LEADER',   NULL),
   ('EXPENSE',  2, 'DIVISION_HEAD', 'AMOUNT_GTE_1M'),
   ('EXPENSE',  3, 'CEO',           'AMOUNT_GTE_5M'),
+  -- EXPENSE와 동일한 금액 구간 재사용 (docs/adr/ADR-014)
   ('PURCHASE', 1, 'TEAM_LEADER',   NULL),
-  ('PURCHASE', 2, 'DIVISION_HEAD', NULL),
-  ('PURCHASE', 3, 'CEO',           NULL),
+  ('PURCHASE', 2, 'DIVISION_HEAD', 'AMOUNT_GTE_1M'),
+  ('PURCHASE', 3, 'CEO',           'AMOUNT_GTE_5M'),
   ('GENERAL',  1, 'TEAM_LEADER',   NULL),
   ('GENERAL',  2, 'DIVISION_HEAD', NULL);
 
@@ -260,3 +261,57 @@ INSERT INTO budget_allocation (org_unit_id, account_category, fiscal_year, amoun
   (21, 'OTHER',         2026, 2000000),
   (31, 'SUPPLIES',      2026, 20000000),
   (31, 'OTHER',         2026, 3000000);
+
+-- =========================================================
+-- Module 5: 재고/구매관리 (egovframework.erp.inventory)
+-- =========================================================
+
+CREATE TABLE IF NOT EXISTS item (
+    id             BIGINT AUTO_INCREMENT PRIMARY KEY,
+    name           VARCHAR(100) NOT NULL,
+    unit           VARCHAR(20) NOT NULL COMMENT '개/박스/세트 등',
+    current_stock  INT NOT NULL DEFAULT 0,
+    safety_stock   INT NOT NULL DEFAULT 0
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- 구매요청서: 전자결재 문서와 1:1 연결 (Module 3/4와 동일한 패턴 — docs/adr/ADR-008)
+-- status: PENDING(상신)|CONFIRMED(결재승인=구매확정=입고대기)|RECEIVED(입고완료)|REJECTED(반려) (docs/adr/ADR-015)
+CREATE TABLE IF NOT EXISTS purchase_request (
+    id                    BIGINT AUTO_INCREMENT PRIMARY KEY,
+    employee_id           BIGINT NOT NULL,
+    org_unit_id           BIGINT NOT NULL,
+    item_id               BIGINT NOT NULL,
+    quantity              INT NOT NULL,
+    amount                DECIMAL(15,2) NOT NULL,
+    reason                VARCHAR(500) NULL,
+    status                VARCHAR(10) NOT NULL DEFAULT 'PENDING',
+    approval_document_id  BIGINT NOT NULL,
+    created_at            DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT fk_purchase_request_employee FOREIGN KEY (employee_id) REFERENCES employee (id),
+    CONSTRAINT fk_purchase_request_org FOREIGN KEY (org_unit_id) REFERENCES org_unit (id),
+    CONSTRAINT fk_purchase_request_item FOREIGN KEY (item_id) REFERENCES item (id),
+    CONSTRAINT fk_purchase_request_document FOREIGN KEY (approval_document_id) REFERENCES approval_document (id)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- 입출고 이력: append-only (update/delete 매퍼 없음 — Module 1 emp_history와 동일한 패턴, docs/adr/ADR-015)
+-- transaction_type은 지금은 RECEIPT(입고)만 쓴다. ISSUE(출고)는 FR-5-4/FR-6-3에 근거해 Module 6이
+-- 실제로 필요할 때 추가한다 — 미리 만들어두지 않는다 (Module 4 BudgetThresholdPolicy 폐기 교훈, ADR-014).
+CREATE TABLE IF NOT EXISTS inventory_transaction (
+    id                   BIGINT AUTO_INCREMENT PRIMARY KEY,
+    item_id              BIGINT NOT NULL,
+    transaction_type     VARCHAR(10) NOT NULL COMMENT 'RECEIPT',
+    quantity             INT NOT NULL,
+    purchase_request_id  BIGINT NULL,
+    created_by           BIGINT NOT NULL,
+    created_at           DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT fk_inventory_transaction_item FOREIGN KEY (item_id) REFERENCES item (id),
+    CONSTRAINT fk_inventory_transaction_purchase FOREIGN KEY (purchase_request_id) REFERENCES purchase_request (id),
+    CONSTRAINT fk_inventory_transaction_employee FOREIGN KEY (created_by) REFERENCES employee (id)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- 데모 품목 (A4 용지, 포장 박스는 의도적으로 안전재고 이하로 시드 — 경고 표시 데모용)
+INSERT INTO item (name, unit, current_stock, safety_stock) VALUES
+  ('사무용 PC', '대', 15, 10),
+  ('A4 용지', '박스', 5, 20),
+  ('사무용 의자', '개', 30, 10),
+  ('포장 박스', '개', 8, 50);
