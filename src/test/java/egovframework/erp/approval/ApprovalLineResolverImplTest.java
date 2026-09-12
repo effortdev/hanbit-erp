@@ -143,6 +143,51 @@ class ApprovalLineResolverImplTest {
         assertEquals(1L, steps.get(1).approverEmployeeId());
     }
 
+    @Test
+    void 지출결의서_100만원_미만은_팀장_단독승인이다() {
+        when(ruleMapper.selectByDocumentType(DocumentType.EXPENSE)).thenReturn(expenseTierRules());
+        Employee staff = employee(4L, "최사원", Position.STAFF, 11L);
+
+        List<ResolvedStep> steps = resolver.resolve(DocumentType.EXPENSE, staff, new BigDecimal("999999"));
+
+        assertEquals(1, steps.size());
+        assertEquals(ApproverLevel.TEAM_LEADER, steps.get(0).approverLevel());
+    }
+
+    @Test
+    void 지출결의서_100만원_이상_500만원_미만은_팀장_본부장이다() {
+        when(ruleMapper.selectByDocumentType(DocumentType.EXPENSE)).thenReturn(expenseTierRules());
+        Employee staff = employee(4L, "최사원", Position.STAFF, 11L);
+
+        List<ResolvedStep> steps = resolver.resolve(DocumentType.EXPENSE, staff, new BigDecimal("1000000"));
+
+        assertEquals(2, steps.size());
+        assertEquals(ApproverLevel.TEAM_LEADER, steps.get(0).approverLevel());
+        assertEquals(ApproverLevel.DIVISION_HEAD, steps.get(1).approverLevel());
+    }
+
+    @Test
+    void 지출결의서_500만원_이상은_팀장_본부장_대표이사다() {
+        when(ruleMapper.selectByDocumentType(DocumentType.EXPENSE)).thenReturn(expenseTierRules());
+        when(employeeRepository.findByPositionAndStatus(Position.CEO, EmployeeStatus.ACTIVE))
+                .thenReturn(List.of(employee(1L, "김대표", Position.CEO, 1L)));
+        Employee staff = employee(4L, "최사원", Position.STAFF, 11L);
+
+        List<ResolvedStep> steps = resolver.resolve(DocumentType.EXPENSE, staff, new BigDecimal("5000000"));
+
+        assertEquals(3, steps.size());
+        assertEquals(ApproverLevel.TEAM_LEADER, steps.get(0).approverLevel());
+        assertEquals(ApproverLevel.DIVISION_HEAD, steps.get(1).approverLevel());
+        assertEquals(ApproverLevel.CEO, steps.get(2).approverLevel());
+    }
+
+    private static List<ApprovalLineRuleVO> expenseTierRules() {
+        return List.of(
+                rule(DocumentType.EXPENSE, 1, ApproverLevel.TEAM_LEADER, null),
+                rule(DocumentType.EXPENSE, 2, ApproverLevel.DIVISION_HEAD, ApprovalCondition.AMOUNT_GTE_1M),
+                rule(DocumentType.EXPENSE, 3, ApproverLevel.CEO, ApprovalCondition.AMOUNT_GTE_5M));
+    }
+
     private static ApprovalLineRuleVO rule(DocumentType type, int order, ApproverLevel level, ApprovalCondition cond) {
         ApprovalLineRuleVO vo = new ApprovalLineRuleVO();
         vo.setDocumentType(type);

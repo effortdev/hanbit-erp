@@ -28,6 +28,7 @@
         <a href="${pageContext.request.contextPath}/hr/emp">사원관리</a>
         <a href="${pageContext.request.contextPath}/approval">전자결재</a>
         <a href="${pageContext.request.contextPath}/attendance">근태관리</a>
+        <a href="${pageContext.request.contextPath}/budget">예산/지출관리</a>
     </div>
     <div class="user">
         <sec:authentication property="principal.employeeName"/>님

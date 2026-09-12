@@ -28,6 +28,9 @@ import java.util.List;
 @Service
 public class ApprovalLineResolverImpl implements ApprovalLineResolver {
 
+    private static final BigDecimal ONE_MILLION = new BigDecimal("1000000");
+    private static final BigDecimal FIVE_MILLION = new BigDecimal("5000000");
+
     private final ApprovalLineRuleMapper ruleMapper;
     private final OrgMapper orgMapper;
     private final EmployeeRepository employeeRepository;
@@ -50,9 +53,8 @@ public class ApprovalLineResolverImpl implements ApprovalLineResolver {
         List<ResolvedStep> resolved = new ArrayList<>();
 
         for (ApprovalLineRuleVO rule : rules) {
-            if (rule.getConditionExpr() == ApprovalCondition.BUDGET_80_EXCEEDED
-                    && !budgetThresholdPolicy.isExceeded(drafter.getOrgUnitId(), amount)) {
-                continue; // 조건 미충족 - 이 단계는 결재라인에서 제외 (FR-2-4)
+            if (rule.getConditionExpr() != null && !isConditionMet(rule.getConditionExpr(), drafter, amount)) {
+                continue; // 조건 미충족 - 이 단계는 결재라인에서 제외 (FR-2-4, ADR-011)
             }
 
             Long approverId = resolveApprover(rule.getApproverLevel(), drafter);
@@ -63,6 +65,20 @@ public class ApprovalLineResolverImpl implements ApprovalLineResolver {
             resolved.add(new ResolvedStep(rule.getApproverLevel(), approverId));
         }
         return resolved;
+    }
+
+    /** 외부 모듈 조회가 필요한 조건(예산 소진율)과 입력값만으로 계산되는 조건(금액 구간)을 함께 다룬다 (docs/adr/ADR-011). */
+    private boolean isConditionMet(ApprovalCondition condition, Employee drafter, BigDecimal amount) {
+        switch (condition) {
+            case BUDGET_80_EXCEEDED:
+                return budgetThresholdPolicy.isExceeded(drafter.getOrgUnitId(), amount);
+            case AMOUNT_GTE_1M:
+                return amount != null && amount.compareTo(ONE_MILLION) >= 0;
+            case AMOUNT_GTE_5M:
+                return amount != null && amount.compareTo(FIVE_MILLION) >= 0;
+            default:
+                throw new IllegalStateException("알 수 없는 결재 조건: " + condition);
+        }
     }
 
     private Long resolveApprover(ApproverLevel level, Employee drafter) {

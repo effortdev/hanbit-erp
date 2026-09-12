@@ -112,9 +112,10 @@ CREATE TABLE IF NOT EXISTS approval_line_rule (
 
 INSERT INTO approval_line_rule (document_type, step_order, approver_level, condition_expr) VALUES
   ('VACATION', 1, 'TEAM_LEADER',   NULL),
+  -- 금액 구간별 결재라인 (docs/adr/ADR-011) — 이전엔 예산 소진율(BUDGET_80_EXCEEDED) 조건이었음
   ('EXPENSE',  1, 'TEAM_LEADER',   NULL),
-  ('EXPENSE',  2, 'DIVISION_HEAD', NULL),
-  ('EXPENSE',  3, 'CEO',           'BUDGET_80_EXCEEDED'),
+  ('EXPENSE',  2, 'DIVISION_HEAD', 'AMOUNT_GTE_1M'),
+  ('EXPENSE',  3, 'CEO',           'AMOUNT_GTE_5M'),
   ('PURCHASE', 1, 'TEAM_LEADER',   NULL),
   ('PURCHASE', 2, 'DIVISION_HEAD', NULL),
   ('PURCHASE', 3, 'CEO',           NULL),
@@ -213,3 +214,49 @@ CREATE TABLE IF NOT EXISTS attendance_record (
     UNIQUE KEY uq_attendance_employee_date (employee_id, work_date),
     CONSTRAINT fk_attendance_employee FOREIGN KEY (employee_id) REFERENCES employee (id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- =========================================================
+-- Module 4: 예산/지출관리 (egovframework.erp.budget)
+-- =========================================================
+
+-- 배정 단위: 조직 x 계정과목 x 회계연도 (docs/adr/ADR-013)
+CREATE TABLE IF NOT EXISTS budget_allocation (
+    id                BIGINT AUTO_INCREMENT PRIMARY KEY,
+    org_unit_id       BIGINT NOT NULL,
+    account_category  VARCHAR(20) NOT NULL COMMENT 'LABOR|TRAVEL|SUPPLIES|ENTERTAINMENT|OTHER',
+    fiscal_year       INT NOT NULL,
+    amount            DECIMAL(15,2) NOT NULL,
+    UNIQUE KEY uq_budget_allocation (org_unit_id, account_category, fiscal_year),
+    CONSTRAINT fk_budget_allocation_org FOREIGN KEY (org_unit_id) REFERENCES org_unit (id)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- 지출결의서: 전자결재 문서와 1:1 연결 (Module 3 attendance_vacation_request와 동일한 패턴)
+-- org_unit_id는 기안 시점 소속의 스냅샷이다 — 이후 발령이 나도 이미 집행된 예산 집계가 흔들리지 않도록.
+CREATE TABLE IF NOT EXISTS budget_expense_request (
+    id                  BIGINT AUTO_INCREMENT PRIMARY KEY,
+    employee_id         BIGINT NOT NULL,
+    org_unit_id         BIGINT NOT NULL,
+    account_category    VARCHAR(20) NOT NULL,
+    amount              DECIMAL(15,2) NOT NULL,
+    reason              VARCHAR(500) NULL,
+    exception_reason    VARCHAR(500) NULL COMMENT 'ADR-012: 예산 100% 초과 + 500만원 이상 건의 예외 승인 사유',
+    status              VARCHAR(10) NOT NULL DEFAULT 'PENDING' COMMENT 'PENDING|APPROVED|REJECTED',
+    approval_document_id BIGINT NOT NULL,
+    created_at          DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT fk_budget_expense_employee FOREIGN KEY (employee_id) REFERENCES employee (id),
+    CONSTRAINT fk_budget_expense_org FOREIGN KEY (org_unit_id) REFERENCES org_unit (id),
+    CONSTRAINT fk_budget_expense_document FOREIGN KEY (approval_document_id) REFERENCES approval_document (id)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- 데모 배정 (회계연도 2026 — 이 프로젝트의 기준 "현재"와 동일)
+INSERT INTO budget_allocation (org_unit_id, account_category, fiscal_year, amount) VALUES
+  (11, 'LABOR',         2026, 50000000),
+  (11, 'TRAVEL',        2026, 5000000),
+  (11, 'SUPPLIES',      2026, 3000000),
+  (11, 'ENTERTAINMENT', 2026, 2000000),
+  (11, 'OTHER',         2026, 1000000),
+  (21, 'TRAVEL',        2026, 10000000),
+  (21, 'ENTERTAINMENT', 2026, 8000000),
+  (21, 'OTHER',         2026, 2000000),
+  (31, 'SUPPLIES',      2026, 20000000),
+  (31, 'OTHER',         2026, 3000000);
