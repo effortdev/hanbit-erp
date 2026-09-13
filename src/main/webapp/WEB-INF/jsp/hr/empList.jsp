@@ -23,7 +23,13 @@
                     </c:forEach>
                 </td>
                 <td>${emp.hireDate}</td>
-                <td>${emp.status}</td>
+                <td>
+                    <c:choose>
+                        <c:when test="${emp.status == 'ACTIVE'}"><span class="badge badge-success">재직</span></c:when>
+                        <c:when test="${emp.status == 'LEFT'}"><span class="badge badge-neutral">퇴사</span></c:when>
+                        <c:otherwise><span class="badge badge-neutral">${emp.status}</span></c:otherwise>
+                    </c:choose>
+                </td>
                 <td><a href="${pageContext.request.contextPath}/hr/emp/${emp.id}/history">발령이력</a></td>
             </tr>
         </c:forEach>
