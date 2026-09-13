@@ -3,7 +3,9 @@
 
 <div class="card">
     <h2>매출 대시보드 (월별/부서별)</h2>
-    <a href="${pageContext.request.contextPath}/sales/orders">수주 목록</a>
+    <div class="page-actions">
+        <a class="btn btn-secondary" href="${pageContext.request.contextPath}/sales/orders">수주 목록</a>
+    </div>
 </div>
 
 <div class="card">

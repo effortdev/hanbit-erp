@@ -3,8 +3,10 @@
 
 <div class="card">
     <h2>지출결의서</h2>
-    <a href="${pageContext.request.contextPath}/budget">예산 현황</a>
-    <a href="${pageContext.request.contextPath}/budget/expense/new">+ 지출결의서 상신</a>
+    <div class="page-actions">
+        <a class="btn btn-primary" href="${pageContext.request.contextPath}/budget/expense/new">+ 지출결의서 상신</a>
+        <a class="btn btn-secondary" href="${pageContext.request.contextPath}/budget">예산 현황</a>
+    </div>
 </div>
 
 <div class="card">

@@ -3,9 +3,11 @@
 
 <div class="card">
     <h2>수주 목록</h2>
-    <a href="${pageContext.request.contextPath}/sales/orders/new">+ 수주 등록</a>
-    <a href="${pageContext.request.contextPath}/sales/customers">거래처 관리</a>
-    <a href="${pageContext.request.contextPath}/sales/dashboard">매출 대시보드</a>
+    <div class="page-actions">
+        <a class="btn btn-primary" href="${pageContext.request.contextPath}/sales/orders/new">+ 수주 등록</a>
+        <a class="btn btn-secondary" href="${pageContext.request.contextPath}/sales/customers">거래처 관리</a>
+        <a class="btn btn-secondary" href="${pageContext.request.contextPath}/sales/dashboard">매출 대시보드</a>
+    </div>
 </div>
 
 <div class="card">

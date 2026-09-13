@@ -214,16 +214,46 @@ a:hover {
 /* ===== 공통 컴포넌트 ===== */
 
 .page-actions {
-  margin: -6px 0 20px;
+  margin: 10px 0 -6px;
   display: flex;
-  gap: 16px;
+  gap: 10px;
   flex-wrap: wrap;
   align-items: center;
 }
 
-.page-actions a {
-  font-weight: 500;
+.btn {
+  display: inline-flex;
+  align-items: center;
+  padding: 7px 14px;
+  border: 1px solid transparent;
+  border-radius: var(--radius-sm);
+  font-family: inherit;
   font-size: 12.5px;
+  font-weight: 500;
+  line-height: 1.4;
+  white-space: nowrap;
+  cursor: pointer;
+}
+
+.btn-primary {
+  background: var(--color-primary);
+  color: #ffffff;
+}
+
+.btn-primary:hover {
+  background: var(--color-primary-dark);
+  color: #ffffff;
+}
+
+.btn-secondary {
+  background: var(--color-primary-tint);
+  color: var(--color-primary-dark);
+  border-color: var(--color-primary-tint-strong);
+}
+
+.btn-secondary:hover {
+  background: var(--color-primary-tint-strong);
+  color: var(--color-primary-dark);
 }
 
 .card {

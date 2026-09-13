@@ -4,7 +4,9 @@
 <div class="card">
     <h2>휴가신청 / 연차현황</h2>
     <p>올해 부여일수: <strong>${annualDays}</strong>일 / 잔여일수: <strong>${remainingDays}</strong>일</p>
-    <a href="${pageContext.request.contextPath}/attendance/vacation/new">+ 휴가 신청</a>
+    <div class="page-actions">
+        <a class="btn btn-primary" href="${pageContext.request.contextPath}/attendance/vacation/new">+ 휴가 신청</a>
+    </div>
 </div>
 
 <div class="card">

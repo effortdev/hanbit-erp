@@ -4,8 +4,10 @@
 
 <div class="card">
     <h2>예산 소진 현황 (올해)</h2>
-    <a href="${pageContext.request.contextPath}/budget/allocations/new">+ 예산 배정</a>
-    <a href="${pageContext.request.contextPath}/budget/expense">지출결의서 목록</a>
+    <div class="page-actions">
+        <a class="btn btn-primary" href="${pageContext.request.contextPath}/budget/allocations/new">+ 예산 배정</a>
+        <a class="btn btn-secondary" href="${pageContext.request.contextPath}/budget/expense">지출결의서 목록</a>
+    </div>
 </div>
 
 <div class="card">

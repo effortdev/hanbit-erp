@@ -3,8 +3,10 @@
 
 <div class="card">
     <h2>구매요청서</h2>
-    <a href="${pageContext.request.contextPath}/inventory">재고 현황</a>
-    <a href="${pageContext.request.contextPath}/inventory/purchase/new">+ 구매요청서 작성</a>
+    <div class="page-actions">
+        <a class="btn btn-primary" href="${pageContext.request.contextPath}/inventory/purchase/new">+ 구매요청서 작성</a>
+        <a class="btn btn-secondary" href="${pageContext.request.contextPath}/inventory">재고 현황</a>
+    </div>
 </div>
 
 <div class="card">

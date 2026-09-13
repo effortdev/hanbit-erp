@@ -3,7 +3,9 @@
 
 <div class="card">
     <h2>조직도 — ㈜한빛전자</h2>
-    <a href="${pageContext.request.contextPath}/hr/org/new">+ 조직 등록</a>
+    <div class="page-actions">
+        <a class="btn btn-primary" href="${pageContext.request.contextPath}/hr/org/new">+ 조직 등록</a>
+    </div>
 </div>
 
 <c:forEach var="hq" items="${orgUnits}">

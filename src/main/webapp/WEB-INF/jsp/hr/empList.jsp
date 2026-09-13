@@ -3,7 +3,9 @@
 
 <div class="card">
     <h2>사원 목록</h2>
-    <a href="${pageContext.request.contextPath}/hr/emp/new">+ 사원 등록</a>
+    <div class="page-actions">
+        <a class="btn btn-primary" href="${pageContext.request.contextPath}/hr/emp/new">+ 사원 등록</a>
+    </div>
 </div>
 
 <div class="card">

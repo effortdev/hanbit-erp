@@ -4,9 +4,11 @@
 
 <div class="card">
     <h2>전자결재</h2>
-    <c:forEach var="t" items="${documentTypes}">
-        <a href="${pageContext.request.contextPath}/approval/draft/${t}">+ ${t.label} 기안</a>
-    </c:forEach>
+    <div class="page-actions">
+        <c:forEach var="t" items="${documentTypes}">
+            <a class="btn btn-primary" href="${pageContext.request.contextPath}/approval/draft/${t}">+ ${t.label} 기안</a>
+        </c:forEach>
+    </div>
 </div>
 
 <div class="card">

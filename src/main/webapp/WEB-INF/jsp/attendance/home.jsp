@@ -3,7 +3,9 @@
 
 <div class="card">
     <h2>근태관리</h2>
-    <a href="${pageContext.request.contextPath}/attendance/vacation">휴가신청/연차현황</a>
+    <div class="page-actions">
+        <a class="btn btn-secondary" href="${pageContext.request.contextPath}/attendance/vacation">휴가신청/연차현황</a>
+    </div>
 </div>
 
 <div class="card">
