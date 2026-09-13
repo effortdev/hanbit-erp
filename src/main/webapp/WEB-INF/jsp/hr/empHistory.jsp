@@ -2,7 +2,7 @@
 <%@ include file="/WEB-INF/jsp/common/header.jsp" %>
 
 <div class="card">
-    <h2>${employee.name} (${employee.position}) — 발령이력</h2>
+    <h2>${employee.name} (${employee.position.label}) — 발령이력</h2>
 </div>
 
 <div class="card">
@@ -49,14 +49,28 @@
         <c:forEach var="h" items="${history}">
             <tr>
                 <td>${h.changedAt}</td>
-                <td>${h.changeType}</td>
                 <td>
-                    <c:if test="${h.changeType == 'TRANSFER'}">org#${h.beforeOrgUnitId}</c:if>
-                    <c:if test="${h.changeType == 'PROMOTION'}">${h.beforePosition}</c:if>
+                    <c:choose>
+                        <c:when test="${h.changeType == 'TRANSFER'}">부서이동</c:when>
+                        <c:when test="${h.changeType == 'PROMOTION'}">승진</c:when>
+                        <c:otherwise>${h.changeType}</c:otherwise>
+                    </c:choose>
                 </td>
                 <td>
-                    <c:if test="${h.changeType == 'TRANSFER'}">org#${h.afterOrgUnitId}</c:if>
-                    <c:if test="${h.changeType == 'PROMOTION'}">${h.afterPosition}</c:if>
+                    <c:if test="${h.changeType == 'TRANSFER'}">
+                        <c:forEach var="org" items="${orgUnits}">
+                            <c:if test="${org.id == h.beforeOrgUnitId}">${org.name}</c:if>
+                        </c:forEach>
+                    </c:if>
+                    <c:if test="${h.changeType == 'PROMOTION'}">${h.beforePosition.label}</c:if>
+                </td>
+                <td>
+                    <c:if test="${h.changeType == 'TRANSFER'}">
+                        <c:forEach var="org" items="${orgUnits}">
+                            <c:if test="${org.id == h.afterOrgUnitId}">${org.name}</c:if>
+                        </c:forEach>
+                    </c:if>
+                    <c:if test="${h.changeType == 'PROMOTION'}">${h.afterPosition.label}</c:if>
                 </td>
                 <td>${h.changedBy}</td>
             </tr>
