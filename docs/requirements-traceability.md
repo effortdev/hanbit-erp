@@ -29,7 +29,7 @@
 | ID | 상태 | 근거 | 비고 |
 |---|---|---|---|
 | FR-2-1 | 구현됨 | `approval_line_rule` 시드 데이터 + `ApprovalLineResolverImpl.resolve()` | VACATION/GENERAL/EXPENSE/PURCHASE 모두 요구사항 표(2026-09-13 갱신본)와 일치 |
-| FR-2-2 | 구현됨 | `ApprovalServiceImpl.act()`, `ApprovalController.reject()`(`comment` 파라미터 필수) | 사소한 틈: HTML `required` + 컨트롤러 파라미터 필수 처리는 있으나, 서비스 계층에서 공백 문자열(`" "`)까지 막는 검증은 없음 |
+| FR-2-2 | 구현됨 | `ApprovalServiceImpl.act()` — REJECT + 공백/빈 사유는 `BusinessException`, `ApprovalController.reject()`(`comment` 파라미터 필수) | 2026-09-13: 서비스 계층 검증 추가로 격차 해결 (`ApprovalServiceImplTest`) |
 | FR-2-3 | 구현됨 | `DocumentStatusCalculator.calculate()` — WAITING/IN_PROGRESS/APPROVED/REJECTED 판정, `ApprovalServiceImpl.getDocument()`로 조회 | |
 | FR-2-4 | 구현됨 | `ApprovalLineResolverImpl.isConditionMet()` — `AMOUNT_GTE_1M`/`AMOUNT_GTE_5M` 금액 구간에 따라 결재 단계 자동 증가 | 2026-09-13: 요구사항 정의서를 실제 구현(금액 구간 기준, ADR-011)에 맞춰 갱신함 — 예산 소진율 80% 연동안은 채택하지 않기로 확정. 자세한 경위는 `docs/erp_requirements.md` FR-2-4 각주와 `docs/troubleshooting.md` 2026-09-13 항목 참고 |
 | FR-2-5 | 구현됨 | `AttendanceApprovalListener.onApproved()` (`@TransactionalEventListener(AFTER_COMMIT)`) | |
@@ -97,6 +97,10 @@
 - **원인**: 기업 프로필 표는 "구매요청서 = 항상 팀장→본부장→대표이사"였지만, 실제 구현(ADR-014)은 EXPENSE와 동일한 금액 구간(100만/500만원)을 재사용해 100만원 미만은 팀장 단독 승인으로 끝남
 - **처리**: 코드는 그대로 두고 기업 프로필 표를 "지출결의서와 동일한 금액 구간" 방식으로 갱신 (`docs/erp_requirements.md`)
 
+### [해결: 2026-09-13] FR-2-2 — 반려 사유 필수 입력이 서버단에서 강제되지 않음
+- **원인**: 브라우저 HTML `required` 속성에만 의존해, API를 직접 호출하면 사유 없이 반려 처리가 가능했음
+- **처리**: `ApprovalServiceImpl.act()`에 `action == REJECT && (comment == null || comment.isBlank())`이면 `BusinessException`을 던지는 서버측 검증 추가. 회귀 테스트 `ApprovalServiceImplTest`(사유 없음/공백/정상 반려/승인은 영향 없음 4케이스) 추가
+
 ---
 
 ## 발견된 주요 격차 (우선순위 논의 필요)
@@ -113,23 +117,17 @@
 - **실제 동작**: 알림 메커니즘 자체가 없음(이메일/웹소켓/폴링 배지 등 전무). 사용자가 결재함 화면에 직접 들어와야만 상태를 확인할 수 있음
 - **영향**: 포트폴리오 범위에서 흔히 생략되는 항목이지만, 명시적 NFR이므로 "왜 안 했는지"에 대한 답이 필요(예: 범위 외 처리 ADR 작성)
 
-### 3. [Medium] FR-2-2 — 반려 사유 필수 입력이 서버단에서 강제되지 않음
-- **요구사항 원문**: "결재자는 승인/반려 처리를 할 수 있고, **반려 시 사유를 입력해야 한다**"
-- **실제 동작**: `approval/detail.jsp`의 HTML `required` 속성과 `ApprovalController.reject()`의 `@RequestParam String comment` 파라미터 필수 처리만 있고, 서비스 계층(`ApprovalServiceImpl.act()`)과 DB(`approval_action.comment VARCHAR(500) NULL`, NOT NULL 아님) 어디에도 공백/빈 문자열 검증이 없음. curl 등으로 `comment=`(빈 값)를 직접 POST하면 사유 없이 반려 처리가 그대로 성공함
-- **근거**: `approval/web/ApprovalController.java`(reject 메서드), `approval/service/impl/ApprovalServiceImpl.java`(act 메서드), `sql/schema.sql`(approval_action 테이블 정의)
-- **영향**: 브라우저 UI로만 쓰면 드러나지 않지만, 요구사항이 명시한 "필수" 제약이 서버단에서 전혀 보장되지 않는 실질적 검증 공백. 구현 비용이 낮은 편(서비스 계층에 `StringUtils.hasText()` 체크 한 줄 + DB NOT NULL 제약 추가)
-
-### 4. [Low] NFR-4-1 — 예산 차감이 "지출결의 승인 트랜잭션과 원자적"이지 않음
+### 3. [Low] NFR-4-1 — 예산 차감이 "지출결의 승인 트랜잭션과 원자적"이지 않음
 - **요구사항 원문**: "예산 차감은 지출결의 승인 트랜잭션과 함께 원자적으로 처리되어야 한다(정합성 보장)"
 - **실제 동작**: 승인 트랜잭션 커밋 후 `AFTER_COMMIT` 이벤트로 별도 트랜잭션에서 상태를 전환(다른 모든 모듈과 동일한 아키텍처 패턴, ADR-008). 다만 PENDING 상태도 소진율 계산에 포함되므로 과다지출 자체는 기안 시점에 동기적으로 이미 막혀 있어 **기능적 결과는 크게 다르지 않음**
 - **영향**: 문구상으로는 미충족이지만, 이 프로젝트 전체가 채택한 "실패 도메인 분리" 아키텍처 원칙과 직접 상충되는 항목이라 NFR 문구를 수정하거나, 이 프로젝트의 아키텍처 원칙을 예외적으로 깨야 함 — 어느 쪽이든 의도적 판단이 필요
 
-### 5. [Low] FR-1-2 — 사원의 입사일(hireDate)을 수정하는 기능이 없음
+### 4. [Low] FR-1-2 — 사원의 입사일(hireDate)을 수정하는 기능이 없음
 - **요구사항 원문**: "사원 정보(직급, 소속 부서, 입사일)를 등록/수정/**조회**할 수 있어야 한다"
 - **실제 동작**: 직급/소속부서는 발령(승진/전보) 형태로 수정 가능하지만, 입사일은 등록 시점 이후 수정할 방법이 없음(`Employee` 엔티티에 setter 없음, 서비스/컨트롤러에 관련 메서드 없음)
 - **영향**: 실무상 드문 케이스(오탈자 정정 정도)라 우선순위는 낮음
 
-### 6. [Low] NFR-6-1 — 수주 등록 시점 재고 체크가 "동시 등록된 미확정 수주"를 반영하지 못함
+### 5. [Low] NFR-6-1 — 수주 등록 시점 재고 체크가 "동시 등록된 미확정 수주"를 반영하지 못함
 - **요구사항 원문**: "가용 재고보다 많은 수량의 수주는 시스템이 **사전에** 차단해야 한다"
 - **실제 동작**: `SalesOrderServiceImpl.registerOrder()`는 등록 시점에 품목의 실물 현재고(`item.getCurrentStock()`)만 비교하고, 아직 CONFIRMED되지 않은 다른 REGISTERED 수주가 이미 그 재고를 사실상 예약해둔 상태는 고려하지 않는다. 같은 품목에 대해 재고보다 많은 수량의 수주가 여러 건 동시에 REGISTERED로 등록될 수 있음(각 건은 개별적으로는 재고 이내라 통과)
 - **영향**: 실제 음수 재고나 이중 차감은 발생하지 않음 — 확정(`confirmOrder()`) 시점의 `decreaseStockIfAvailable()` 조건부 UPDATE가 최종 안전장치로 작동해 물리적 초과 판매는 100% 방지됨(NFR-5-1과 동일 메커니즘). 다만 "등록은 됐는데 나중에 확정이 막히는" UX상의 사전 차단 실패 케이스는 발생 가능 — 데이터 무결성 문제가 아니라 사용자 경험 개선 항목에 가까워 우선순위는 낮음

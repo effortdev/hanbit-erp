@@ -180,6 +180,10 @@ public class ApprovalServiceImpl implements ApprovalService {
         if (!ApprovalStepRules.isActionable(steps, target)) {
             throw new BusinessException("아직 처리할 차례가 아니거나 이미 처리된 단계입니다.");
         }
+        if (action == ActionType.REJECT && (comment == null || comment.isBlank())) {
+            // FR-2-2: 반려 시 사유 입력은 필수 — 화면단 required만으로는 API 직접 호출을 막지 못해 서비스 계층에서도 강제한다.
+            throw new BusinessException("반려 시 사유를 입력해야 합니다.");
+        }
 
         actionMapper.insertAction(ApprovalActionVO.of(stepId, action, comment));
 
