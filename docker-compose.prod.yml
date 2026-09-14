@@ -1,0 +1,59 @@
+# 홈서버(FIREBAT R3) 배포용 compose 파일.
+#
+# 로컬 개발용 docker-compose.yml(MySQL만, 호스트 포트 3309)과 별개로,
+# 서버에는 MySQL + Tomcat(앱) 두 컨테이너를 함께 올린다. 컨테이너 내부 포트는
+# 표준값(MySQL 3306, Tomcat 8080)을 그대로 쓰고, 호스트에 매핑하는 포트만
+# 서버의 기존 프로젝트(hsmarket 3306/3307/8080/8081, routfit, NPM 80/81/443)와
+# 겹치지 않는 값으로 새로 골랐다 (3308, 8082).
+#
+# Nginx Proxy Manager는 이 호스트 포트를 쓰지 않는다 — 이 서버의 기존 4개
+# 사이트(hsmarket/routfit/routfit-api/concert-ticketing)가 전부 그렇듯,
+# NPM 컨테이너를 아래 hanbit-erp-net 네트워크에 join시켜 컨테이너명(hanbit-erp-app)
+# + 내부 표준 포트(8080)로 직접 프록시한다. 자세한 절차는 README 배포 섹션 참고.
+#
+# 사용법 (서버에서):
+#   cp .env.example .env   # 서버 전용 실제 값으로 채움 (로컬 dev .env와 값을 공유하지 않는다)
+#   docker compose -f docker-compose.prod.yml up -d --build
+#   docker network connect hanbit-erp-net npm-npm-1   # 최초 1회만
+
+services:
+  mysql:
+    image: mysql:8.0
+    container_name: hanbit-erp-mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MYSQL_DATABASE: ${MYSQL_DATABASE:-hanbit_erp}
+      MYSQL_USER: ${MYSQL_USER:-erp}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+    ports:
+      - "3308:3306"   # 호스트에서 직접 접속/점검용. 앱 컨테이너는 내부 네트워크로 mysql:3306에 접속한다.
+    volumes:
+      - hanbit-erp-mysql-data:/var/lib/mysql
+    command: --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
+    networks:
+      - hanbit-erp-net
+    restart: unless-stopped
+
+  app:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile
+    container_name: hanbit-erp-app
+    depends_on:
+      - mysql
+    environment:
+      JDBC_URL: "jdbc:mysql://mysql:3306/${MYSQL_DATABASE:-hanbit_erp}?useUnicode=true&characterEncoding=UTF-8&serverTimezone=Asia/Seoul"
+      JDBC_USERNAME: ${MYSQL_USER:-erp}
+      JDBC_PASSWORD: ${MYSQL_PASSWORD}
+    ports:
+      - "8082:8080"   # NPM은 이 포트를 쓰지 않는다(위 설명 참고) — 호스트에서 직접 점검할 때만 사용.
+    networks:
+      - hanbit-erp-net
+    restart: unless-stopped
+
+networks:
+  hanbit-erp-net:
+    name: hanbit-erp-net
+
+volumes:
+  hanbit-erp-mysql-data:
