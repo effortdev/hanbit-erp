@@ -3,5 +3,12 @@ target/
 .idea/
 *.iml
 .vscode/
+.claude/
 .DS_Store
 *.log
+
+# 로컬 전용 설정/민감정보 — 실수로 커밋되지 않도록 패턴으로 미리 배제
+*-local.properties
+*.local.properties
+.env
+.env.*
