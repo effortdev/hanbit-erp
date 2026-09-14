@@ -82,4 +82,25 @@ public class ErpUserDetails implements UserDetails {
     public boolean isEnabled() {
         return enabled;
     }
+
+    /**
+     * Spring Security의 동시 세션 제어(ConcurrencyControlAuthenticationStrategy,
+     * docs/adr/ADR-005)는 SessionRegistry에 세션을 이 principal 객체를 키로 등록/조회한다.
+     * loadUserByUsername()이 로그인마다 DB를 새로 조회해 매번 새 ErpUserDetails 인스턴스를
+     * 만들기 때문에, equals/hashCode를 재정의하지 않으면(기본 Object 동일성 비교) 같은
+     * 계정의 서로 다른 로그인 시도가 SessionRegistry에서 "다른 사용자"로 취급되어
+     * maximumSessions 제한이 조용히 무력화된다 — username 기준으로 동등성을 정의해 이를 막는다.
+     */
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof ErpUserDetails)) return false;
+        ErpUserDetails that = (ErpUserDetails) o;
+        return username.equals(that.username);
+    }
+
+    @Override
+    public int hashCode() {
+        return username.hashCode();
+    }
 }
