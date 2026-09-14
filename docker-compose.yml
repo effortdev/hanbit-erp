@@ -3,10 +3,11 @@ services:
     image: mysql:8.0
     container_name: hanbit-erp-mysql
     environment:
-      MYSQL_ROOT_PASSWORD: erp1234
-      MYSQL_DATABASE: hanbit_erp
-      MYSQL_USER: erp
-      MYSQL_PASSWORD: erp1234
+      # 실제 값은 .env(gitignore 대상)에서 읽는다 — .env.example 참고
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MYSQL_DATABASE: ${MYSQL_DATABASE:-hanbit_erp}
+      MYSQL_USER: ${MYSQL_USER:-erp}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
     ports:
       - "3309:3306"
     volumes:

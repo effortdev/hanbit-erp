@@ -176,15 +176,22 @@
 ### 실행 순서
 
 ```bash
-# 1. MySQL 기동 (로컬 3306 포트 충돌을 피해 3309로 매핑)
+# 0. 환경변수 파일 준비 (최초 1회) — DB 비밀번호를 코드/설정 파일에 하드코딩하지 않는다
+cp .env.example .env
+# .env를 열어 MYSQL_ROOT_PASSWORD / MYSQL_PASSWORD / JDBC_PASSWORD 값을 채운다.
+# (JDBC_PASSWORD는 MYSQL_PASSWORD와 같은 값으로 맞춘다)
+
+# 1. MySQL 기동 (로컬 3306 포트 충돌을 피해 3309로 매핑, docker compose가 .env를 자동으로 읽는다)
 docker compose up -d
 
 # 2. 스키마 + 시드 데이터 적재
 # --default-character-set=utf8mb4 필수 (누락 시 한글 시드 데이터가 깨져서 저장됨 — 6장 참고)
-mysql --default-character-set=utf8mb4 -h127.0.0.1 -P3309 -uerp -perp1234 hanbit_erp < sql/schema.sql
+# -p 뒤에 비밀번호를 바로 붙이면 .env에 넣은 값을 그대로 사용한다 (예: -pMYSQL_PASSWORD값)
+mysql --default-character-set=utf8mb4 -h127.0.0.1 -P3309 -uerp -p<.env의 MYSQL_PASSWORD> hanbit_erp < sql/schema.sql
 
-# 3. 빌드/실행 (JAVA_HOME을 JDK 17로 지정)
+# 3. 빌드/실행 (JAVA_HOME을 JDK 17로 지정, .env의 값을 환경변수로 불러온 뒤 실행)
 export JAVA_HOME=/Library/Java/JavaVirtualMachines/jdk-17.jdk/Contents/Home
+set -a && source .env && set +a
 mvn jetty:run
 ```
 

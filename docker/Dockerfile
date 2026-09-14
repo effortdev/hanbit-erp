@@ -10,7 +10,7 @@
 #     -p 8080:8080 \
 #     -e JDBC_URL="jdbc:mysql://hanbit-erp-mysql:3306/hanbit_erp?useUnicode=true&characterEncoding=UTF-8&serverTimezone=Asia/Seoul" \
 #     -e JDBC_USERNAME=erp \
-#     -e JDBC_PASSWORD=erp1234 \
+#     -e JDBC_PASSWORD="<.env의 MYSQL_PASSWORD와 동일한 값>" \
 #     hanbit-erp:latest
 #
 # DB 접속 정보는 src/main/resources/db.properties에 로컬 Jetty 개발용 기본값
