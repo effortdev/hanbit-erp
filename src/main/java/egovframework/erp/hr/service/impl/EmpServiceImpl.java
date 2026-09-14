@@ -57,7 +57,8 @@ public class EmpServiceImpl implements EmpService {
 
     @Override
     @Transactional
-    public void transfer(Long employeeId, Long newOrgUnitId, String changedBy) {
+    public void transfer(Long employeeId, Long newOrgUnitId, String changedBy, Position actorPosition) {
+        requireLeaderOrAbove(actorPosition, "발령(부서이동)");
         Employee employee = getEmployee(employeeId);
         OrgUnitVO newOrgUnit = orgMapper.selectOrgUnit(newOrgUnitId);
         if (newOrgUnit == null) {
@@ -72,12 +73,24 @@ public class EmpServiceImpl implements EmpService {
 
     @Override
     @Transactional
-    public void promote(Long employeeId, Position newPosition, String changedBy) {
+    public void promote(Long employeeId, Position newPosition, String changedBy, Position actorPosition) {
+        requireLeaderOrAbove(actorPosition, "발령(승진)");
         Employee employee = getEmployee(employeeId);
         Position beforePosition = employee.getPosition();
         employee.promote(newPosition);
         empHistoryMapper.insertHistory(
                 EmpHistoryVO.promotion(employeeId, beforePosition, newPosition, changedBy));
+    }
+
+    /**
+     * 발령 처리 권한 검증 (docs/adr/ADR-019). 팀장/본부장/대표이사만 발령을 처리할 수 있다.
+     * Position enum은 이미 결재라인 자동구성(ADR-006)이 전제하는 오름차순 직급 순서를 갖고
+     * 있어, 같은 순서를 그대로 재사용한다 — 별도의 역할(Role) 체계를 새로 만들지 않는다.
+     */
+    private void requireLeaderOrAbove(Position actorPosition, String action) {
+        if (actorPosition.ordinal() < Position.TEAM_LEADER.ordinal()) {
+            throw new BusinessException(action + "는 팀장급 이상만 처리할 수 있습니다.");
+        }
     }
 
     @Override

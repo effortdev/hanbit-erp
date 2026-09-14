@@ -58,13 +58,15 @@ public class EmpController {
 
     @PostMapping("/{id}/transfer")
     public String transfer(@PathVariable Long id, @RequestParam Long newOrgUnitId) {
-        empService.transfer(id, newOrgUnitId, SecurityUtils.currentUser().getEmployeeName());
+        empService.transfer(id, newOrgUnitId, SecurityUtils.currentUser().getEmployeeName(),
+                SecurityUtils.currentUser().getPosition());
         return "redirect:/hr/emp/" + id + "/history";
     }
 
     @PostMapping("/{id}/promote")
     public String promote(@PathVariable Long id, @RequestParam Position newPosition) {
-        empService.promote(id, newPosition, SecurityUtils.currentUser().getEmployeeName());
+        empService.promote(id, newPosition, SecurityUtils.currentUser().getEmployeeName(),
+                SecurityUtils.currentUser().getPosition());
         return "redirect:/hr/emp/" + id + "/history";
     }
 

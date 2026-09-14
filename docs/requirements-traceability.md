@@ -18,7 +18,7 @@
 |---|---|---|---|
 | FR-1-1 | 구현됨 | `OrgServiceImpl.registerOrgUnit()` — HQ는 parent 불가, TEAM은 parent가 HQ여야 함을 검증 (docs/adr/ADR-004) | 2단계 구조가 DB 제약이 아니라 서비스 계층 검증으로 강제됨 |
 | FR-1-2 | 부분구현 | `EmpServiceImpl.register/transfer/promote`, `EmpController` | 직급(`promote`)·소속부서(`transfer`) 수정 경로는 있으나, **입사일(hireDate)을 수정하는 API/화면이 전혀 없음** — `Employee` 엔티티에 setter조차 없음 |
-| FR-1-3 | 구현됨 | `EmpServiceImpl.transfer()`/`promote()` — `Employee` 변경과 `EmpHistoryMapper.insertHistory()`가 동일 `@Transactional` 안에서 실행 | `EmpHistoryMapper`는 insert/select만 존재 (append-only 확인) |
+| FR-1-3 | 구현됨 | `EmpServiceImpl.transfer()`/`promote()` — `Employee` 변경과 `EmpHistoryMapper.insertHistory()`가 동일 `@Transactional` 안에서 실행 | `EmpHistoryMapper`는 insert/select만 존재 (append-only 확인). 2026-09-14: 이 기능에 권한 검증이 전혀 없어 사원 계정으로도 임의 발령이 가능했던 격차를 발견/해결 — `requireLeaderOrAbove()` 추가 (docs/adr/ADR-019, 아래 "해결된 격차" 참고) |
 | FR-1-4 | 구현됨 | approval/attendance/budget/inventory/sales 전 모듈이 `EmployeeRepository`/`OrgMapper`를 직접 참조 (예: `ApprovalServiceImpl`, `ExpenseServiceImpl`) | 어느 모듈도 employee/org_unit을 자체 테이블로 복제하지 않음 (mapper XML은 전부 JOIN, 별도 INSERT 대상 아님) |
 | NFR-1-1 | 구현됨 | 위와 동일 — 6개 모듈 전부 동일한 `org_unit`/`employee` 테이블을 단일 소스로 참조 | |
 
@@ -100,6 +100,13 @@
 ### [해결: 2026-09-13] FR-2-2 — 반려 사유 필수 입력이 서버단에서 강제되지 않음
 - **원인**: 브라우저 HTML `required` 속성에만 의존해, API를 직접 호출하면 사유 없이 반려 처리가 가능했음
 - **처리**: `ApprovalServiceImpl.act()`에 `action == REJECT && (comment == null || comment.isBlank())`이면 `BusinessException`을 던지는 서버측 검증 추가. 회귀 테스트 `ApprovalServiceImplTest`(사유 없음/공백/정상 반려/승인은 영향 없음 4케이스) 추가
+
+### [해결: 2026-09-14] FR-1-3 관련 — 발령(부서이동/승진) 처리에 권한 검증이 전혀 없었음
+- **분류**: 명시적 FR/NFR 문구 미충족이 아니라(erp_requirements.md 어디에도 "발령은 누가 처리할 수 있어야 한다"는 문장 자체가 없음), FR-1-3("발령 시 변경 이력이 자동으로 기록되어야 한다")을 구현한 기능 자체에 있어야 할 접근 제어가 빠져 있던 사례. 일반 사원(`staff1`) 계정으로 실제 재현해 확인함
+- **원인**: `EmpController.transfer()`/`.promote()`가 로그인 여부만 확인할 뿐(`isAuthenticated()`), 호출자가 발령을 처리할 권한이 있는지, 대상이 본인인지조차 검사하지 않았음. 어떤 사원이든 자기 자신을 포함한 임의 사원의 소속/직급을 바꿀 수 있었음
+- **영향(심각도가 높았던 이유)**: 사원이 자기 자신을 `CEO`로 승진시키면 `ApprovalLineResolverImpl.requireSingleCeo()`의 "대표이사는 정확히 1명" 불변조건이 깨져, 대표이사 결재가 필요한 모든 고액 지출결의서·구매요청서 기안이 회사 전체에서 즉시 막히는 가용성 장애로 이어질 수 있었음(자기결재 스킵 로직과는 별개로, 그 이전 단계인 결재라인 계산 자체가 예외로 실패함)
+- **처리**: `EmpServiceImpl`에 `requireLeaderOrAbove()` 가드를 추가해 팀장급(`Position.TEAM_LEADER` 이상) 미만이 발령을 시도하면 `BusinessException`으로 거부. 상세 후보 비교와 근거는 `docs/adr/ADR-019-employee-transfer-authorization.md` 참고. 회귀 테스트 `EmpServiceImplTest`(사원의 부서이동/승진 거부 2케이스, 팀장급 이상 승진 허용 1케이스) 추가. staff1(사원)/leader1(팀장) 계정으로 curl 재현 검증 완료
+- **함께 확인한 것(현재는 도달 불가능)**: "사원이 스스로를 다른 조직의 리더로 지정"할 수 있는지도 함께 조사함 — `OrgServiceImpl.assignLeader()`가 서비스 계층에 존재하지만 이를 호출하는 컨트롤러/엔드포인트가 전혀 없어, 현재는 HTTP로 도달할 수 있는 경로가 아님. 향후 이 기능을 컨트롤러에 연결할 때는 동일한 권한 검증이 반드시 함께 추가되어야 함(ADR-019에 기록해 둠)
 
 ---
 
